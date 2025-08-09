@@ -53,14 +53,13 @@ export async function analyzeImageWithPersona(imageBase64: string) {
       {
         role: 'user',
         content: [
-          { type: 'text', text: 'Analyze this image as a crime scene. Return JSON with evidenceLog and detectiveNotes only.' },
+          { type: 'text', text: 'Analyze this image as a crime scene using the exact format specified in the system prompt.' },
           { type: 'image_url', image_url: { url: imageBase64.startsWith('data:') ? imageBase64 : `data:image/jpeg;base64,${imageBase64}` } }
         ]
       }
     ],
-    response_format: { type: 'json_object' },
     temperature: 0.6,
-    max_tokens: 400
+    max_tokens: 800
   } as const;
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -74,10 +73,6 @@ export async function analyzeImageWithPersona(imageBase64: string) {
 
   if (!res.ok) throw new Error(`OpenAI error: ${res.status}`);
   const data = await res.json();
-  const text = data.choices?.[0]?.message?.content ?? '{}';
-  let parsed: any = {};
-  try { parsed = JSON.parse(text); } catch { parsed = {}; }
-  const evidenceLog = parsed.evidenceLog ?? '• Exhibit A: Obstruction of clarity.';
-  const detectiveNotes = parsed.detectiveNotes ?? 'Suspect image refused cooperation. Write it up as "unhelpful."';
-  return { evidenceLog, detectiveNotes };
+  const report = data.choices?.[0]?.message?.content ?? 'Case file corrupted. Investigation inconclusive.';
+  return { report };
 }
