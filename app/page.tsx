@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { TypewriterText } from '@/components/TypewriterText';
 import { ShareModal } from '@/components/ShareModal';
 import { CrimeTapeHeader } from '@/components/headers/CrimeTapeHeader';
-import { applyFilterToImageForAI, compressImage, fileToBase64, generateCaseNumber, formatReport, formatShortReport } from '@/lib/utils';
+import { applyFilterToImageForAI, compressImage, fileToBase64, generateCaseNumber } from '@/lib/utils';
 import { useHistory } from '@/components/history/useHistory';
 
 const MAX_SIZE_MB = 10;
@@ -13,9 +13,7 @@ type FilterKind = 'none' | 'noir' | 'sepia';
 
 type Report = {
   caseId: string;
-  evidenceLog: string;
-  detectiveNotes: string;
-  fullText: string;
+  report: string;
   shortText: string;
 };
 
@@ -83,14 +81,12 @@ export default function Page() {
       if (!res.ok) throw new Error(`Analyze failed (${res.status})`);
       const data = await res.json();
       const caseId = generateCaseNumber();
-      const evidenceLog: string = data.evidenceLog ?? '• Exhibit A: Uncooperative pixels.';
-      const detectiveNotes: string = data.detectiveNotes ?? 'Report unavailable. The scene stonewalled the lab.';
-      const fullText = formatReport(caseId, evidenceLog, detectiveNotes);
-      const shortText = formatShortReport(caseId, evidenceLog, detectiveNotes, 260);
-      const rep: Report = { caseId, evidenceLog, detectiveNotes, fullText, shortText };
+      const report: string = data.report ?? 'Case file corrupted. Investigation inconclusive.';
+      const shortText = `CASE #${caseId}\n\n${report.substring(0, 260)}...`;
+      const rep: Report = { caseId, report, shortText };
       setReport(rep);
       setProgress('done');
-      if (previewURL) addItem({ id: caseId, createdAt: Date.now(), thumbnail: previewURL, text: fullText });
+      if (previewURL) addItem({ id: caseId, createdAt: Date.now(), thumbnail: previewURL, text: report });
     } catch (e: any) {
       setError(e?.message ?? 'Unknown error');
       setProgress('error');
@@ -171,7 +167,7 @@ export default function Page() {
             <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
             <h2 className="mt-1 font-semibold text-lg">AI Detective Report</h2>
             <div className="mt-3 typewriter">
-              <TypewriterText text={`EVIDENCE LOG\n${report.evidenceLog}\n\nDETECTIVE NOTES\n${report.detectiveNotes}`}/>
+              <TypewriterText text={report.report}/>
             </div>
           </div>
 

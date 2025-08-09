@@ -4,9 +4,6 @@ export function generateCaseNumber() {
   return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
 }
 
-export function formatReport(caseId: string, evidenceLog: string, detectiveNotes: string) {
-  return `CASE #${caseId}\n\nEVIDENCE LOG\n${evidenceLog}\n\nDETECTIVE NOTES\n${detectiveNotes}`;
-}
 
 export async function fileToBase64(file: File): Promise<string> {
   const arr = await file.arrayBuffer();
@@ -42,11 +39,6 @@ export async function compressImage(file: File, maxDim = 1600, quality = 0.85): 
   return new File([blob], (file.name || 'image') + '.jpg', { type: 'image/jpeg' });
 }
 
-export function formatShortReport(caseId: string, evidenceLog: string, detectiveNotes: string, maxLen = 260) {
-  const firstSentence = detectiveNotes.split(/(?<=[.!?])\s/)[0] || detectiveNotes;
-  const base = `${firstSentence} — CASE #${caseId} · crimecam.fun`;
-  return base.length > maxLen ? base.slice(0, Math.max(0, maxLen - 1)) + '…' : base;
-}
 
 export async function applyFilterToImageForAI(file: File, filter: 'none' | 'noir' | 'sepia'): Promise<File> {
   if (filter === 'none') return file;
