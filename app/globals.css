@@ -1,7 +1,36 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+:root { color-scheme: dark; }
+html, body { height: 100%; }
+body { @apply bg-crime-bg text-neutral-200; }
+
+/* Crime tape header stripes */
+.crime-tape {
+  background: repeating-linear-gradient(
+    -45deg,
+    #111 0 12px,
+    #111 12px 24px,
+    #fef08a 24px 36px,
+    #fef08a 36px 48px
+  );
 }
+.crime-tape-overlay { @apply bg-black/70; }
+
+/* Typewriter base */
+.typewriter { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; }
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-type { animation: none !important; }
+}
+
+/* Dropzone */
+.dropzone { @apply border-2 border-dashed border-crime-border rounded-2xl p-6 transition-colors; }
+.dropzone.hover { @apply border-crime-red bg-crime-surface/40; }
+
+/* Buttons */
+.btn { @apply inline-flex items-center justify-center rounded-2xl px-4 py-3 font-medium shadow-crime; }
+.btn-primary { @apply bg-crime-red text-white hover:opacity-90 active:opacity-80; }
+.btn-ghost { @apply bg-crime-surface text-neutral-200 border border-crime-border hover:bg-crime-surface/70; }

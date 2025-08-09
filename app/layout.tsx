@@ -1,44 +1,35 @@
-import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
-import "./globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-});
+import './globals.css';
+import type { Metadata } from 'next';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
-  title: "Crime Scene - Detective AI Photo Analyzer",
-  description: "Analyze your photos with sarcastic detective commentary. Every image becomes a crime scene investigation.",
-  metadataBase: new URL('https://crimescene.fun'),
+  title: 'CrimeCam.Fun — AI Crime Scene Photo Analyzer',
+  description: 'Snap a pic. Get a sarcastic detective report. Mobile-first, noir UI.',
   openGraph: {
-    title: 'Crime Scene - Detective AI Photo Analyzer',
-    description: 'Every photo tells a suspicious story',
-    images: ['/og-image.png'],
+    title: 'CrimeCam.Fun',
+    description: 'Evidence logs for your everyday mess.',
+    url: 'https://crimecam.fun',
+    siteName: 'CrimeCam.Fun',
+    images: [
+      { url: '/og.png', width: 1200, height: 630, alt: 'CrimeCam.Fun' }
+    ],
+    type: 'website'
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Crime Scene - Detective AI Photo Analyzer',
-    description: 'Every photo tells a suspicious story',
-  },
+  themeColor: '#0b0b0c'
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
-      >
-        {children}
+    <html lang="en" className="dark">
+      <body>
+        <div className="min-h-screen">
+          <Suspense fallback={<div className="p-8">Loading…</div>}>
+            {children}
+          </Suspense>
+        </div>
+        <footer className="text-center text-xs text-neutral-500 py-6 border-t border-crime-border">
+          Images are analyzed ephemerally. No storage in V1. © {new Date().getFullYear()} CrimeCam.Fun
+        </footer>
       </body>
     </html>
   );

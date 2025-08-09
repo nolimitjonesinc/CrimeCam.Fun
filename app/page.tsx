@@ -1,192 +1,191 @@
 'use client';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { TypewriterText } from '@/components/TypewriterText';
+import { ShareModal } from '@/components/ShareModal';
+import { CrimeTapeHeader } from '@/components/headers/CrimeTapeHeader';
+import { applyFilterToImageForAI, compressImage, fileToBase64, generateCaseNumber, formatReport, formatShortReport } from '@/lib/utils';
+import { useHistory } from '@/components/history/useHistory';
 
-import { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { fileToBase64 } from '@/lib/utils';
+const MAX_SIZE_MB = 10;
 
-export default function Home() {
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [report, setReport] = useState<string | null>(null);
+type FilterKind = 'none' | 'noir' | 'sepia';
+
+type Report = {
+  caseId: string;
+  evidenceLog: string;
+  detectiveNotes: string;
+  fullText: string;
+  shortText: string;
+};
+
+export default function Page() {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [dragHover, setDragHover] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewURL, setPreviewURL] = useState<string | null>(null);
+  const [filter, setFilter] = useState<FilterKind>('none');
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState<'idle' | 'upload' | 'analyzing' | 'done' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [report, setReport] = useState<Report | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [applyToAI, setApplyToAI] = useState(false);
+  const { addItem } = useHistory();
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  useEffect(() => () => { if (previewURL) URL.revokeObjectURL(previewURL); }, [previewURL]);
 
-    // Check if it's an image
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file');
-      return;
+  const filteredStyle = useMemo(() => {
+    switch (filter) {
+      case 'noir':
+        return { filter: 'grayscale(100%) contrast(120%) brightness(90%)' } as const;
+      case 'sepia':
+        return { filter: 'sepia(100%) contrast(110%)' } as const;
+      default:
+        return {} as const;
     }
+  }, [filter]);
 
-    try {
-      setIsAnalyzing(true);
-      setError(null);
-      setReport(null);
-
-      // Convert to base64
-      const base64 = await fileToBase64(file);
-
-      // Send to API
-      const response = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image: base64 }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Analysis failed');
-      }
-
-      setReport(data.report);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
-  const handleShare = () => {
-    if (report) {
-      const shareText = `${report}\n\nAnalyzed at crimescene.fun`;
-      
-      if (navigator.share) {
-        navigator.share({
-          text: shareText,
-          title: 'Crime Scene Analysis',
-        });
-      } else {
-        navigator.clipboard.writeText(shareText);
-        alert('Report copied to clipboard!');
-      }
-    }
-  };
-
-  const handleNewAnalysis = () => {
-    setReport(null);
+  async function onPick(file: File) {
     setError(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { setError('Unsupported file type. Use JPG/PNG.'); return; }
+    const sizeMb = file.size / (1024 * 1024);
+    if (sizeMb > MAX_SIZE_MB) { setError('Max size is 10MB.'); return; }
+
+    let finalFile = file;
+    try {
+      finalFile = await compressImage(file, 1600, 0.85);
+    } catch {}
+
+    setImageFile(finalFile);
+    const url = URL.createObjectURL(finalFile);
+    setPreviewURL(url);
+    setProgress('idle');
+    setReport(null);
+  }
+
+  async function analyze() {
+    if (!imageFile) return;
+    try {
+      setLoading(true); setProgress('upload');
+      let fileForAI = imageFile;
+      if (applyToAI && filter !== 'none') {
+        try { fileForAI = await applyFilterToImageForAI(imageFile, filter); } catch {}
+      }
+      const base64 = await fileToBase64(fileForAI);
+      setProgress('analyzing');
+      const res = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageBase64: base64 })
+      });
+      if (!res.ok) throw new Error(`Analyze failed (${res.status})`);
+      const data = await res.json();
+      const caseId = generateCaseNumber();
+      const evidenceLog: string = data.evidenceLog ?? '• Exhibit A: Uncooperative pixels.';
+      const detectiveNotes: string = data.detectiveNotes ?? 'Report unavailable. The scene stonewalled the lab.';
+      const fullText = formatReport(caseId, evidenceLog, detectiveNotes);
+      const shortText = formatShortReport(caseId, evidenceLog, detectiveNotes, 260);
+      const rep: Report = { caseId, evidenceLog, detectiveNotes, fullText, shortText };
+      setReport(rep);
+      setProgress('done');
+      if (previewURL) addItem({ id: caseId, createdAt: Date.now(), thumbnail: previewURL, text: fullText });
+    } catch (e: any) {
+      setError(e?.message ?? 'Unknown error');
+      setProgress('error');
+    } finally {
+      setLoading(false);
     }
-  };
+  }
+
+  function reset() {
+    setImageFile(null); setPreviewURL(null); setReport(null); setError(null); setProgress('idle'); setFilter('none');
+  }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-100">
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
-        {/* Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-4xl font-bold mb-2 text-red-500">CRIME SCENE</h1>
-          <p className="text-gray-400">Every photo tells a suspicious story</p>
-        </motion.div>
+    <main className="px-4 pb-28 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+      <CrimeTapeHeader />
 
-        <AnimatePresence mode="wait">
-          {!report ? (
-            <motion.div
-              key="upload"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="space-y-6"
-            >
-              {/* Upload Area */}
-              <div className="relative">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                  id="file-upload"
-                />
-                <label
-                  htmlFor="file-upload"
-                  className="block w-full p-12 border-2 border-dashed border-gray-600 rounded-lg text-center cursor-pointer hover:border-red-500 transition-colors"
-                >
-                  <div className="space-y-4">
-                    <div className="text-6xl">[ EVIDENCE ]</div>
-                    <div>
-                      <p className="text-xl font-semibold">Upload Evidence</p>
-                      <p className="text-gray-400 text-sm mt-1">Click to select or take a photo</p>
-                    </div>
-                  </div>
+      {/* Upload / Preview */}
+      {!previewURL && (
+        <section className="mt-6">
+          <div
+            className={`dropzone ${dragHover ? 'hover' : ''}`}
+            onDragOver={(e) => { e.preventDefault(); setDragHover(true); }}
+            onDragLeave={() => setDragHover(false)}
+            onDrop={(e) => { e.preventDefault(); setDragHover(false); const f = e.dataTransfer.files?.[0]; if (f) onPick(f); }}
+          >
+            <div className="flex flex-col items-center gap-3 text-center">
+              <h2 className="text-xl font-semibold">Upload Evidence</h2>
+              <p className="text-neutral-400 text-sm">Drag & drop or use camera. JPG/PNG · ≤10MB</p>
+              <div className="flex gap-3 mt-2">
+                <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
+                <label className="btn btn-primary cursor-pointer">
+                  <input type="file" accept="image/*" capture="environment" className="hidden"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) onPick(f); }} />
+                  Use Camera
                 </label>
               </div>
-
-              {/* Loading State */}
-              {isAnalyzing && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-center py-8"
-                >
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
-                  <p className="mt-4 text-gray-400">Detective analyzing the scene...</p>
-                </motion.div>
-              )}
-
-              {/* Error State */}
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="bg-red-900/20 border border-red-700 rounded-lg p-4 text-red-400"
-                >
-                  {error}
-                </motion.div>
-              )}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="report"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-6"
-            >
-              {/* Report */}
-              <div className="bg-gray-800 rounded-lg p-6 font-mono text-sm leading-relaxed whitespace-pre-wrap">
-                {report}
-              </div>
-
-              {/* Actions */}
-              <div className="flex gap-4">
-                <button
-                  onClick={handleShare}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-                >
-                  Share Report
-                </button>
-                <button
-                  onClick={handleNewAnalysis}
-                  className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
-                >
-                  New Analysis
-                </button>
-              </div>
+              <input ref={inputRef} type="file" accept="image/*" className="hidden"
+                     onChange={(e)=>{const f=e.target.files?.[0]; if (f) onPick(f);}} />
+            </div>
+          </div>
+          {error && (
+            <motion.div initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mt-3 text-sm text-red-400">
+              {error}
             </motion.div>
           )}
-        </AnimatePresence>
+        </section>
+      )}
 
-        {/* Footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-12 text-center text-gray-500 text-sm"
-        >
-          <p>No evidence is safe from scrutiny</p>
-        </motion.div>
-      </div>
-    </div>
+      {previewURL && !report && (
+        <section className="mt-6 space-y-4">
+          <div className="relative">
+            <img src={previewURL} alt="Preview" className="w-full rounded-2xl border border-crime-border shadow-crime" style={filteredStyle} />
+            <div className="absolute left-3 bottom-3 flex gap-2">
+              <button className={`btn ${filter==='none'?'btn-primary':'btn-ghost'}`} onClick={()=>setFilter('none')}>Original</button>
+              <button className={`btn ${filter==='noir'?'btn-primary':'btn-ghost'}`} onClick={()=>setFilter('noir')}>Noir</button>
+              <button className={`btn ${filter==='sepia'?'btn-primary':'btn-ghost'}`} onClick={()=>setFilter('sepia')}>Sepia</button>
+            </div>
+            <label className="ml-2 text-xs text-neutral-300 flex items-center gap-2 border border-crime-border rounded-xl px-2 py-1 bg-crime-surface/70">
+              <input type="checkbox" checked={applyToAI} onChange={(e)=>setApplyToAI(e.target.checked)} />
+              Apply to analysis
+            </label>
+          </div>
+
+          <div className="fixed inset-x-0 bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border">
+            <div className="max-w-3xl mx-auto flex gap-3">
+              <button disabled={loading} className="btn btn-ghost flex-1" onClick={reset}>Back</button>
+              <button disabled={loading} className="btn btn-primary flex-[2]" onClick={analyze}>
+                {loading ? (progress === 'upload' ? 'Uploading…' : 'Analyzing…') : 'Analyze Scene'}
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {report && (
+        <section className="mt-6 space-y-4">
+          <div className="rounded-2xl border border-crime-border bg-crime-surface p-5 shadow-crime">
+            <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
+            <h2 className="mt-1 font-semibold text-lg">AI Detective Report</h2>
+            <div className="mt-3 typewriter">
+              <TypewriterText text={`EVIDENCE LOG\n${report.evidenceLog}\n\nDETECTIVE NOTES\n${report.detectiveNotes}`}/>
+            </div>
+          </div>
+
+          <div className="fixed inset-x-0 bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border">
+            <div className="max-w-3xl mx-auto grid grid-cols-3 gap-3">
+              <button className="btn btn-ghost" onClick={reset}>New Analysis</button>
+              <button className="btn btn-ghost" onClick={() => navigator.clipboard.writeText(report.fullText)}>Copy</button>
+              <button className="btn btn-primary" onClick={() => setShareOpen(true)}>Share</button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} textFull={report?.fullText ?? ''} textShort={report?.shortText ?? ''} />
+    </main>
   );
 }
