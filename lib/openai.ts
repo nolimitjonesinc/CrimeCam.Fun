@@ -1,4 +1,4 @@
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY as string;
+const OPENAI_API_KEY = (process.env.OPENAI_API_KEY as string)?.trim();
 
 const SYSTEM_PROMPT = `You are a professional crime scene analyzer with a dry sense of humor. Analyze images as suspicious crime scenes using law-enforcement terminology for mundane objects. Never use emojis.
 
