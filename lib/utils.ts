@@ -4,6 +4,34 @@ export function generateCaseNumber() {
   return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
 }
 
+export function isHEICFile(file: File): boolean {
+  return file.type === 'image/heic' || file.type === 'image/heif' || 
+         file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+}
+
+export async function convertHEICToJPEG(file: File): Promise<File> {
+  try {
+    // Dynamic import to avoid SSR issues
+    const { default: heic2any } = await import('heic2any');
+    
+    const result = await heic2any({
+      blob: file,
+      toType: 'image/jpeg',
+      quality: 0.9
+    });
+    
+    // heic2any returns a blob or array of blobs
+    const jpegBlob = Array.isArray(result) ? result[0] : result;
+    
+    // Create a new file with JPEG extension
+    const originalName = file.name.replace(/\.(heic|heif)$/i, '');
+    return new File([jpegBlob], `${originalName}.jpg`, { type: 'image/jpeg' });
+  } catch (error) {
+    console.error('HEIC conversion failed:', error);
+    throw new Error('Failed to convert HEIC image. Please try a different image.');
+  }
+}
+
 
 export async function fileToBase64(file: File): Promise<string> {
   const arr = await file.arrayBuffer();

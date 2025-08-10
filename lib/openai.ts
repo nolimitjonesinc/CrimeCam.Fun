@@ -67,7 +67,10 @@ export async function analyzeImageWithPersona(imageBase64: string) {
     body: JSON.stringify(body)
   });
 
-  if (!res.ok) throw new Error(`OpenAI error: ${res.status}`);
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`OpenAI error: ${res.status} - ${errorText}`);
+  }
   const data = await res.json();
   const report = data.choices?.[0]?.message?.content ?? 'Case file corrupted. Investigation inconclusive.';
   return { report };

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { TypewriterText } from '@/components/TypewriterText';
 import { ShareModal } from '@/components/ShareModal';
 import { CrimeTapeHeader } from '@/components/headers/CrimeTapeHeader';
-import { applyFilterToImageForAI, compressImage, fileToBase64, generateCaseNumber } from '@/lib/utils';
+import { applyFilterToImageForAI, compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEICToJPEG } from '@/lib/utils';
 import { useHistory } from '@/components/history/useHistory';
 
 const MAX_SIZE_MB = 10;
@@ -47,14 +47,29 @@ export default function Page() {
   async function onPick(file: File) {
     setError(null);
     if (!file) return;
-    if (!file.type.startsWith('image/')) { setError('Unsupported file type. Use JPG/PNG.'); return; }
+    
+    // Check if it's a HEIC file or regular image
+    const isHeic = isHEICFile(file);
+    if (!file.type.startsWith('image/') && !isHeic) { 
+      setError('Unsupported file type. Use JPG/PNG/HEIC.'); 
+      return; 
+    }
+    
     const sizeMb = file.size / (1024 * 1024);
     if (sizeMb > MAX_SIZE_MB) { setError('Max size is 10MB.'); return; }
 
     let finalFile = file;
     try {
-      finalFile = await compressImage(file, 1600, 0.85);
-    } catch {}
+      // Convert HEIC to JPEG if needed
+      if (isHeic) {
+        finalFile = await convertHEICToJPEG(file);
+      }
+      // Then compress the image
+      finalFile = await compressImage(finalFile, 1600, 0.85);
+    } catch (error: any) {
+      setError(error.message || 'Image processing failed.');
+      return;
+    }
 
     setImageFile(finalFile);
     const url = URL.createObjectURL(finalFile);
@@ -118,16 +133,16 @@ export default function Page() {
           >
             <div className="flex flex-col items-center gap-3 text-center">
               <h2 className="text-xl font-semibold">Upload Evidence</h2>
-              <p className="text-neutral-400 text-sm">Drag & drop or use camera. JPG/PNG · ≤10MB</p>
+              <p className="text-neutral-400 text-sm">Drag & drop or use camera. JPG/PNG/HEIC · ≤10MB</p>
               <div className="flex gap-3 mt-2">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
                 <label className="btn btn-primary cursor-pointer">
-                  <input type="file" accept="image/*" capture="environment" className="hidden"
+                  <input type="file" accept="image/*,.heic,.heif" capture="environment" className="hidden"
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) onPick(f); }} />
                   Use Camera
                 </label>
               </div>
-              <input ref={inputRef} type="file" accept="image/*" className="hidden"
+              <input ref={inputRef} type="file" accept="image/*,.heic,.heif" className="hidden"
                      onChange={(e)=>{const f=e.target.files?.[0]; if (f) onPick(f);}} />
             </div>
           </div>
