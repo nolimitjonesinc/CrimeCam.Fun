@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { analyzeImageWithPersona } from '@/lib/openai';
 
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
 export const runtime = 'nodejs';
 
 // naive in-memory rate limiter (per IP)
@@ -26,6 +28,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result);
   } catch (e: any) {
     console.error('OpenAI API Error:', e);
+    // Send error back to see what's actually failing
+    return NextResponse.json({ 
+      error: `OpenAI failed: ${e.message}`,
+      stack: e.stack,
+      openaiKey: OPENAI_API_KEY ? 'present' : 'missing'
+    }, { status: 500 });
+    
     const mockReport = `Crime Scene Report – The Case of the Overworked Workspace
 
 Subject:

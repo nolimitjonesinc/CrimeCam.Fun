@@ -50,7 +50,7 @@ export async function analyzeImageWithPersona(imageBase64: string) {
   const body = {
     model: 'gpt-4o-mini',
     messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system', content: SYSTEM_PROMPT },1
       {
         role: 'user',
         content: [
