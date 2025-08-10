@@ -150,6 +150,12 @@ export default function Page() {
             </label>
           </div>
 
+          {error && progress === 'error' && (
+            <motion.div initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mt-3 text-sm text-red-400 p-3 rounded-lg border border-red-500/20 bg-red-500/10">
+              <strong>Investigation Failed:</strong> {error}
+            </motion.div>
+          )}
+
           <div className="fixed inset-x-0 bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border">
             <div className="max-w-3xl mx-auto flex gap-3">
               <button disabled={loading} className="btn btn-ghost flex-1" onClick={reset}>Back</button>
