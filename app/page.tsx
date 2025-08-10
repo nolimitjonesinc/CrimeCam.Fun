@@ -174,14 +174,14 @@ export default function Page() {
           <div className="fixed inset-x-0 bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border">
             <div className="max-w-3xl mx-auto grid grid-cols-3 gap-3">
               <button className="btn btn-ghost" onClick={reset}>New Analysis</button>
-              <button className="btn btn-ghost" onClick={() => navigator.clipboard.writeText(report.fullText)}>Copy</button>
+              <button className="btn btn-ghost" onClick={() => navigator.clipboard.writeText(report.report)}>Copy</button>
               <button className="btn btn-primary" onClick={() => setShareOpen(true)}>Share</button>
             </div>
           </div>
         </section>
       )}
 
-      <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} textFull={report?.fullText ?? ''} textShort={report?.shortText ?? ''} />
+      <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} textFull={report?.report ?? ''} textShort={report?.shortText ?? ''} />
     </main>
   );
 }
