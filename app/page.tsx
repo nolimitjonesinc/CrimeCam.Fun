@@ -78,7 +78,11 @@ export default function Page() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64: base64 })
       });
-      if (!res.ok) throw new Error(`Analyze failed (${res.status})`);
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        console.error('API Error:', errorData);
+        throw new Error(`Analyze failed (${res.status}): ${errorData.error || 'Unknown error'}`);
+      }
       const data = await res.json();
       const caseId = generateCaseNumber();
       const report: string = data.report ?? 'Case file corrupted. Investigation inconclusive.';
