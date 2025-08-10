@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
     const result = await analyzeImageWithPersona(imageBase64);
     return NextResponse.json(result);
   } catch (e: any) {
+    console.error('OpenAI API Error:', e);
     const mockReport = `Crime Scene Report – The Case of the Overworked Workspace
 
 Subject:
