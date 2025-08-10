@@ -68,7 +68,7 @@ export async function analyzeImageWithPersona(imageBase64: string) {
   if (!OPENAI_API_KEY) throw new Error('Missing OPENAI_API_KEY');
 
   const body = {
-    model: 'gpt-4o-mini',
+    model: 'gpt-5-mini',
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
       {

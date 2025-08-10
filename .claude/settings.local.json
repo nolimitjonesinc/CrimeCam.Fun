@@ -9,7 +9,8 @@
       "Bash(convert:*)",
       "Bash(npm run dev:*)",
       "Bash(pkill:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "WebFetch(domain:platform.openai.com)"
     ],
     "deny": []
   }
