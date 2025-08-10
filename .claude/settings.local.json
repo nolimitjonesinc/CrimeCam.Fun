@@ -8,7 +8,8 @@
       "Bash(mkdir:*)",
       "Bash(convert:*)",
       "Bash(npm run dev:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }
