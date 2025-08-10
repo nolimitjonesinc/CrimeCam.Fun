@@ -54,7 +54,7 @@ export async function analyzeImageWithPersona(imageBase64: string) {
         ]
       }
     ],
-    temperature: 0.9,
+    temperature: 1,
     max_completion_tokens: 1200
   } as const;
 
