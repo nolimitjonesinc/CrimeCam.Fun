@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { TypewriterText } from '@/components/TypewriterText';
 import { ShareModal } from '@/components/ShareModal';
-import { CrimeTapeHeader } from '@/components/headers/CrimeTapeHeader';
+import ColdOpenSplash from '@/components/splash/ColdOpenSplash';
 import { applyFilterToImageForAI, compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEICToJPEG } from '@/lib/utils';
 import { useHistory } from '@/components/history/useHistory';
 
@@ -119,9 +119,7 @@ export default function Page() {
   }
 
   return (
-    <main className="px-4 pb-28 sm:px-6 lg:px-8 max-w-3xl mx-auto">
-      <CrimeTapeHeader />
-
+    <ColdOpenSplash skipIfSeen={true}>
       {/* Upload / Preview */}
       {!previewURL && (
         <section className="mt-6">
@@ -207,6 +205,6 @@ export default function Page() {
       )}
 
       <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} textFull={report?.report ?? ''} textShort={report?.shortText ?? ''} />
-    </main>
+    </ColdOpenSplash>
   );
 }
