@@ -6,7 +6,8 @@
       "Bash(rm:*)",
       "Bash(curl:*)",
       "Bash(mkdir:*)",
-      "Bash(convert:*)"
+      "Bash(convert:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": []
   }
