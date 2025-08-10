@@ -55,7 +55,7 @@ export async function analyzeImageWithPersona(imageBase64: string) {
       }
     ],
     temperature: 1.2,
-    max_tokens: 1200
+    max_completion_tokens: 1200
   } as const;
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
