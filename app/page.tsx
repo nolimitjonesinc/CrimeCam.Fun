@@ -185,8 +185,8 @@ export default function Page() {
       )}
 
       {report && (
-        <section className="mt-6 space-y-4">
-          <div className="rounded-2xl border border-crime-border bg-crime-surface p-5 shadow-crime">
+        <section className="mt-6 space-y-4 pb-24">
+          <div className="rounded-2xl border border-crime-border bg-crime-surface p-5 shadow-crime max-h-[70vh] overflow-y-auto">
             <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
             <h2 className="mt-1 font-semibold text-lg">AI Detective Report</h2>
             <div className="mt-3 typewriter">
