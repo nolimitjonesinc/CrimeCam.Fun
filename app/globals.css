@@ -31,6 +31,9 @@ body { @apply bg-crime-bg text-neutral-200; }
 .dropzone.hover { @apply border-crime-red bg-crime-surface/40; }
 
 /* Buttons */
-.btn { @apply inline-flex items-center justify-center rounded-2xl px-4 py-3 font-medium shadow-crime; }
-.btn-primary { @apply bg-crime-red text-white hover:opacity-90 active:opacity-80; }
-.btn-ghost { @apply bg-crime-surface text-neutral-200 border border-crime-border hover:bg-crime-surface/70; }
+.btn { @apply inline-flex items-center justify-center rounded-xl px-4 py-3 font-medium shadow-crime transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crime-red/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:opacity-60 disabled:pointer-events-none; }
+.btn-primary { @apply bg-crime-red text-white hover:bg-red-500 active:bg-red-600; }
+.btn-ghost { @apply bg-crime-surface text-neutral-200 border border-crime-border hover:bg-white/5 active:bg-white/10; }
+
+/* Cards */
+.card { @apply rounded-2xl border border-crime-border bg-crime-surface shadow-crime; }

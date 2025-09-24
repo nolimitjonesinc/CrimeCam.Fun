@@ -64,7 +64,7 @@ export default function ColdOpenSplash({
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-black text-white">
-      <AnimatePresence>{!done && <ColdOpen />}</AnimatePresence>
+      <AnimatePresence>{!done && <ColdOpen onSkip={() => { localStorage.setItem(seenKey, "1"); setDone(true); onDone?.(); }} />}</AnimatePresence>
 
       {/* REVEALED APP */}
       <motion.div
@@ -80,7 +80,7 @@ export default function ColdOpenSplash({
   );
 }
 
-function ColdOpen() {
+function ColdOpen({ onSkip }: { onSkip?: () => void }) {
   return (
     <motion.div
       className="absolute inset-0"
@@ -89,8 +89,8 @@ function ColdOpen() {
       transition={{ duration: 0.35, ease: "easeOut" }}
     >
       {/* Noir grain + vignette */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.07),rgba(0,0,0,0.85))]" />
-      <div className="pointer-events-none absolute inset-0 opacity-20 [background-image:linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)]; [background-size:22px_22px,22px_22px]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.06),rgba(0,0,0,0.9))]" />
+      <div className="pointer-events-none absolute inset-0 opacity-10 [background-image:linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)]; [background-size:22px_22px,22px_22px]" />
 
       {/* Cop light sweeps (red/blue bar reflections) */}
       <PoliceSweep />
@@ -101,6 +101,11 @@ function ColdOpen() {
       {/* Rubber glove snap and stamp */}
       <RubberGloveAndStamp />
 
+      {/* Skip intro */}
+      <div className="absolute right-3 top-3 z-40">
+        <button onClick={onSkip} className="btn btn-ghost px-3 py-2 text-xs">Skip intro</button>
+      </div>
+
       <style>{keyframes}</style>
     </motion.div>
   );
@@ -109,8 +114,8 @@ function ColdOpen() {
 function PoliceSweep() {
   return (
     <>
-      <div className="pointer-events-none absolute -inset-20 -skew-x-6 animate-sweep-left bg-gradient-to-r from-blue-600/0 via-blue-500/35 to-blue-600/0" />
-      <div className="pointer-events-none absolute -inset-20 skew-x-6 animate-sweep-right bg-gradient-to-l from-red-600/0 via-red-500/35 to-red-600/0" />
+      <div className="pointer-events-none absolute -inset-20 -skew-x-6 animate-sweep-left bg-gradient-to-r from-blue-600/0 via-blue-500/20 to-blue-600/0" />
+      <div className="pointer-events-none absolute -inset-20 skew-x-6 animate-sweep-right bg-gradient-to-l from-red-600/0 via-red-500/20 to-red-600/0" />
     </>
   );
 }

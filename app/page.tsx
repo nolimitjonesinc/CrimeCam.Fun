@@ -123,6 +123,10 @@ export default function Page() {
       {/* Upload / Preview */}
       {!previewURL && (
         <section className="mt-6">
+          <div className="mb-4">
+            <h2 className="text-2xl font-semibold tracking-tight">Upload Evidence</h2>
+            <p className="mt-1 text-neutral-400 text-sm">Drop a photo or use your camera. We’ll generate a tongue‑in‑cheek detective report.</p>
+          </div>
           <div
             className={`dropzone ${dragHover ? 'hover' : ''}`}
             onDragOver={(e) => { e.preventDefault(); setDragHover(true); }}
@@ -130,9 +134,8 @@ export default function Page() {
             onDrop={(e) => { e.preventDefault(); setDragHover(false); const f = e.dataTransfer.files?.[0]; if (f) onPick(f); }}
           >
             <div className="flex flex-col items-center gap-3 text-center">
-              <h2 className="text-xl font-semibold">Upload Evidence</h2>
-              <p className="text-neutral-400 text-sm">Drag & drop or use camera. JPG/PNG/HEIC · ≤10MB</p>
-              <div className="flex gap-3 mt-2">
+              <p className="text-neutral-400 text-sm">JPG/PNG/HEIC · ≤10MB</p>
+              <div className="flex gap-3 mt-1">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
                 <label className="btn btn-primary cursor-pointer">
                   <input type="file" accept="image/*,.heic,.heif" capture="environment" className="hidden"
@@ -161,7 +164,7 @@ export default function Page() {
               <button className={`btn ${filter==='noir'?'btn-primary':'btn-ghost'}`} onClick={()=>setFilter('noir')}>Noir</button>
               <button className={`btn ${filter==='sepia'?'btn-primary':'btn-ghost'}`} onClick={()=>setFilter('sepia')}>Sepia</button>
             </div>
-            <label className="ml-2 text-xs text-neutral-300 flex items-center gap-2 border border-crime-border rounded-xl px-2 py-1 bg-crime-surface/70">
+            <label className="ml-2 mt-2 inline-flex text-xs text-neutral-300 items-center gap-2 border border-crime-border rounded-xl px-2 py-1 bg-crime-surface/70">
               <input type="checkbox" checked={applyToAI} onChange={(e)=>setApplyToAI(e.target.checked)} />
               Apply to analysis
             </label>
@@ -186,10 +189,10 @@ export default function Page() {
 
       {report && (
         <section className="mt-6 space-y-4 pb-24">
-          <div className="rounded-2xl border border-crime-border bg-crime-surface p-5 shadow-crime max-h-[70vh] overflow-y-auto">
+          <div className="card p-5 max-h-[70vh] overflow-y-auto">
             <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
-            <h2 className="mt-1 font-semibold text-lg">AI Detective Report</h2>
-            <div className="mt-3 typewriter">
+            <h2 className="mt-1 font-semibold text-xl tracking-tight">Detective Report</h2>
+            <div className="mt-3 typewriter leading-7 text-[15px]">
               <TypewriterText text={report.report}/>
             </div>
           </div>
