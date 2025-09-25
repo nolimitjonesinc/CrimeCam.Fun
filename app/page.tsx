@@ -5,6 +5,8 @@ import { TypewriterText } from '@/components/TypewriterText';
 import { ShareModal } from '@/components/ShareModal';
 import ColdOpenSplash from '@/components/splash/ColdOpenSplash';
 import { applyFilterToImageForAI, compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEICToJPEG } from '@/lib/utils';
+import Lightbox from '@/components/Lightbox';
+import { exportCompositeImage } from '@/lib/export';
 import { useHistory } from '@/components/history/useHistory';
 
 const MAX_SIZE_MB = 10;
@@ -28,6 +30,8 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<Report | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [applyToAI, setApplyToAI] = useState(false);
   const { addItem } = useHistory();
 
@@ -114,6 +118,29 @@ export default function Page() {
     }
   }
 
+  async function doExport() {
+    if (!previewURL || !report) return;
+    try {
+      setExporting(true);
+      const blob = await exportCompositeImage({ src: previewURL, caseId: report.caseId, report: report.report, filter, useShortText: false });
+      const file = new File([blob], `crime-scene-${report.caseId}.png`, { type: 'image/png' });
+      const canShareFile = typeof navigator !== 'undefined' && 'canShare' in navigator && (navigator as any).canShare?.({ files: [file] });
+      if (navigator.share && canShareFile) {
+        try { await (navigator as any).share({ files: [file], title: `Case #${report.caseId}`, text: 'Crime Scene Report' }); return; } catch {}
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `crime-scene-${report.caseId}.png`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error(e);
+      alert('Export failed. Try again.');
+    } finally {
+      setExporting(false);
+    }
+  }
+
   function reset() {
     setImageFile(null); setPreviewURL(null); setReport(null); setError(null); setProgress('idle'); setFilter('none');
   }
@@ -158,7 +185,7 @@ export default function Page() {
       {previewURL && !report && (
         <section className="mt-6 space-y-4">
           <div className="relative">
-            <img src={previewURL} alt="Preview" className="w-full rounded-2xl border border-crime-border shadow-crime" style={filteredStyle} />
+            <img src={previewURL} alt="Preview" className="w-full rounded-2xl border border-crime-border shadow-crime cursor-zoom-in" style={filteredStyle} onClick={() => setLightboxOpen(true)} />
             <div className="absolute left-3 bottom-3 flex gap-2">
               <button className={`btn ${filter==='none'?'btn-primary':'btn-ghost'}`} onClick={()=>setFilter('none')}>Original</button>
               <button className={`btn ${filter==='noir'?'btn-primary':'btn-ghost'}`} onClick={()=>setFilter('noir')}>Noir</button>
@@ -188,26 +215,41 @@ export default function Page() {
       )}
 
       {report && (
-        <section className="mt-6 space-y-4 pb-24">
-          <div className="card p-5 max-h-[70vh] overflow-y-auto">
-            <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
-            <h2 className="mt-1 font-semibold text-xl tracking-tight">Detective Report</h2>
-            <div className="mt-3 typewriter leading-7 text-[15px]">
-              <TypewriterText text={report.report}/>
+        <section className="mt-6 pb-24">
+          <div className="grid md:grid-cols-2 gap-4 items-start">
+            <div className="space-y-2 md:sticky md:top-20 self-start">
+              {previewURL && (
+                <img
+                  src={previewURL}
+                  alt="Analyzed photo"
+                  className="w-full rounded-2xl border border-crime-border shadow-crime cursor-zoom-in"
+                  style={filteredStyle}
+                  onClick={() => setLightboxOpen(true)}
+                />
+              )}
+            </div>
+            <div className="card p-5 max-h-[70vh] overflow-y-auto">
+              <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
+              <h2 className="mt-1 font-semibold text-xl tracking-tight">Crime Scene Report</h2>
+              <div className="mt-3 typewriter leading-7 text-[15px]">
+                <TypewriterText text={report.report}/>
+              </div>
             </div>
           </div>
 
           <div className="fixed inset-x-0 bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border">
-            <div className="max-w-3xl mx-auto grid grid-cols-3 gap-3">
+            <div className="max-w-3xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-3">
               <button className="btn btn-ghost" onClick={reset}>New Analysis</button>
               <button className="btn btn-ghost" onClick={() => navigator.clipboard.writeText(report.report)}>Copy</button>
               <button className="btn btn-primary" onClick={() => setShareOpen(true)}>Share</button>
+              <button className="btn btn-ghost" disabled={exporting} onClick={doExport}>{exporting ? 'Exporting…' : 'Export'}</button>
             </div>
           </div>
         </section>
       )}
 
       <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} textFull={report?.report ?? ''} textShort={report?.shortText ?? ''} />
+      <Lightbox open={lightboxOpen} onClose={() => setLightboxOpen(false)} src={previewURL || ''} alt="Image preview" />
     </ColdOpenSplash>
   );
 }

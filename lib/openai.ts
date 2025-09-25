@@ -7,8 +7,8 @@ Rules for your response:
 
 Use the format:
 Crime Scene Report – [Funny Title] Edition
-Subject: 1–2 sentence dramatic description of what we're looking at.
-Who's in the Frame? Witty speculation about the person's identity, habits, or vibe.
+Crime Scene: 1–2 sentence dramatic description of what we're looking at.
+What's in the Frame? Witty speculation about the person's identity, habits, or vibe.
 What Might Have Happened Here: Comically exaggerated theories about the "crime" or situation.
 How This Helps Solve the Crime: Ridiculous "clues" pulled from the image.
 Verdict: Short, punchy comedic conclusion.
