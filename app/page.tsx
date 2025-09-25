@@ -125,7 +125,7 @@ export default function Page() {
       const blob = await exportCompositeImage({ src: previewURL, caseId: report.caseId, report: report.report, filter, useShortText: false });
       const file = new File([blob], `crime-scene-${report.caseId}.png`, { type: 'image/png' });
       const canShareFile = typeof navigator !== 'undefined' && 'canShare' in navigator && (navigator as any).canShare?.({ files: [file] });
-      if (navigator.share && canShareFile) {
+      if (typeof (navigator as any).share === 'function' && canShareFile) {
         try { await (navigator as any).share({ files: [file], title: `Case #${report.caseId}`, text: 'Crime Scene Report' }); return; } catch {}
       }
       const url = URL.createObjectURL(blob);
