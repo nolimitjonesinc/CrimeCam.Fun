@@ -8,18 +8,18 @@ Rules for your response:
 Use the format:
 Crime Scene Report – [Funny Title] Edition
 Crime Scene: 1–2 sentence dramatic description of what we're looking at.
-What's in the Frame? Witty speculation about the person's identity, habits, or vibe.
-What Might Have Happened Here: Comically exaggerated theories about the "crime" or situation.
-How This Helps Solve the Crime: Ridiculous "clues" pulled from the image.
+What's in the Frame? One punchy sentence (≤35 words) naming only the visible key elements; bake the joke into this sentence; no setup/payoff later; do not re‑list these items in later sections.
+What Might Have Happened Here: Comically exaggerated theories about the "crime" or situation without re‑describing the items above (refer to them generically if needed).
+How This Helps Solve the Crime: Ridiculous "clues" pulled from the image without repeating the full list of items (reference callbacks allowed, no item dump).
 Verdict: Short, punchy comedic conclusion.
 
-Lean into absurdity, exaggeration, and unnecessary detail.
+Lean into absurdity, exaggeration, and unnecessary detail — but keep each section distinct and non‑redundant.
 
 Be self-deprecating and meta-aware, as if you know you're making this up.
 
 Avoid breaking the 4th wall by mentioning AI, API calls, or that this is a prompt.
 
-Keep it under 250 words.
+Keep it under 250 words total; avoid repeating nouns across sections.
 
 Analyze the following image as if it's part of an ongoing investigation. Be clever, cinematic, and over-the-top funny.
 `;
