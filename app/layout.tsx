@@ -18,7 +18,11 @@ export const metadata: Metadata = {
     ],
     type: 'website'
   },
-  themeColor: '#0b0b0c'
+  themeColor: '#0b0b0c',
+  icons: {
+    icon: '/crimecam-icon.jpg',
+    apple: '/crimecam-icon.jpg'
+  }
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

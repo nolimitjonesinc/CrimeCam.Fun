@@ -151,7 +151,10 @@ export default function Page() {
       {!previewURL && (
         <section className="mt-6">
           <div className="mb-4">
-            <h2 className="text-2xl font-semibold tracking-tight">Upload Evidence</h2>
+            <div className="flex items-center gap-3">
+              <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-8 w-8 rounded-md border border-crime-border object-cover" />
+              <h2 className="text-2xl font-semibold tracking-tight">Upload Evidence</h2>
+            </div>
             <p className="mt-1 text-neutral-400 text-sm">Drop a photo or use your camera. We’ll generate a tongue‑in‑cheek detective report.</p>
           </div>
           <div
