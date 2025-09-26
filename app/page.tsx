@@ -7,6 +7,7 @@ import ColdOpenSplash from '@/components/splash/ColdOpenSplash';
 import { applyFilterToImageForAI, compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEICToJPEG } from '@/lib/utils';
 import Lightbox from '@/components/Lightbox';
 import { exportCompositeImage } from '@/lib/export';
+import { normalizeReport } from '@/lib/normalize';
 import { useHistory } from '@/components/history/useHistory';
 
 const MAX_SIZE_MB = 10;
@@ -104,7 +105,8 @@ export default function Page() {
       }
       const data = await res.json();
       const caseId = generateCaseNumber();
-      const report: string = data.report ?? 'Case file corrupted. Investigation inconclusive.';
+      let report: string = data.report ?? 'Case file corrupted. Investigation inconclusive.';
+      try { report = normalizeReport(report); } catch {}
       const shortText = `CASE #${caseId}\n\n${report.substring(0, 260)}...`;
       const rep: Report = { caseId, report, shortText };
       setReport(rep);

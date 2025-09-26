@@ -49,10 +49,22 @@ function parseReportSections(report: string): { subtitle?: string; sections: Sec
     else if (/what might have happened here:/.test(rawTitle)) title = 'What Might Have Happened Here';
     else if (/how this helps solve the crime:/.test(rawTitle)) title = 'How This Helps Solve the Crime';
     else if (/verdict:/.test(rawTitle)) title = 'Verdict';
-    const content = report.slice(start, end).trim();
+    let content = report.slice(start, end).trim();
+    // Enforce a concise single-sentence frame section
+    if (title === "What's in the Frame?") {
+      content = limitToOneSentence(content, 35);
+    }
     sections.push({ title, content });
   }
   return { subtitle, sections };
+}
+
+function limitToOneSentence(text: string, maxWords: number): string {
+  const sentMatch = text.match(/^[\s\S]*?[\.!?](?:\s|$)/);
+  const sentence = (sentMatch ? sentMatch[0] : text).trim();
+  const words = sentence.split(/\s+/);
+  if (words.length <= maxWords) return sentence;
+  return words.slice(0, maxWords).join(' ') + '…';
 }
 
 export async function exportCompositeImage(opts: {
