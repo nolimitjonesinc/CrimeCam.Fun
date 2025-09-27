@@ -5,8 +5,19 @@ export function generateCaseNumber() {
 }
 
 export function isHEICFile(file: File): boolean {
-  return file.type === 'image/heic' || file.type === 'image/heif' || 
-         file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif');
+  const t = (file.type || '').toLowerCase();
+  const n = (file.name || '').toLowerCase();
+  // Common desktop/browser variants
+  const mimeMatch = (
+    t === 'image/heic' ||
+    t === 'image/heif' ||
+    t === 'image/heic-sequence' ||
+    t === 'image/heif-sequence' ||
+    t === 'application/heic' ||
+    t === 'application/heif'
+  );
+  const extMatch = n.endsWith('.heic') || n.endsWith('.heif');
+  return mimeMatch || extMatch;
 }
 
 export async function convertHEICToJPEG(file: File): Promise<File> {

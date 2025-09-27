@@ -255,7 +255,7 @@ function RubberGloveAndStamp() {
 function HeaderBar({ collapsed = false }: { collapsed?: boolean }) {
   return (
     <div className="z-10 flex w-full items-center gap-3 border-b border-white/10 bg-black/70 px-4 py-3 backdrop-blur">
-      <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-7 w-7 rounded-md border border-white/10 object-cover" />
+      <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-20 w-20 rounded-md border border-white/10 object-cover" />
       <h1 className="text-sm font-semibold tracking-wider text-yellow-300">CRIMECAM.FUN — THE CRIME-ISH UNIT</h1>
       <span className="ml-auto text-xs text-white/60">jurisdiction: questionable</span>
     </div>

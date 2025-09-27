@@ -1,18 +1,19 @@
 'use client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { TypewriterText } from '@/components/TypewriterText';
+// Typewriter effect removed for report rendering in favor of sectioned layout
 import { ShareModal } from '@/components/ShareModal';
 import ColdOpenSplash from '@/components/splash/ColdOpenSplash';
-import { applyFilterToImageForAI, compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEICToJPEG } from '@/lib/utils';
+import { compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEICToJPEG } from '@/lib/utils';
 import Lightbox from '@/components/Lightbox';
 import { exportCompositeImage } from '@/lib/export';
+import { ReportSections } from '@/components/ReportSections';
 import { normalizeReport } from '@/lib/normalize';
 import { useHistory } from '@/components/history/useHistory';
 
 const MAX_SIZE_MB = 10;
 
-type FilterKind = 'none' | 'noir' | 'sepia';
+// Filters removed
 
 type Report = {
   caseId: string;
@@ -25,7 +26,7 @@ export default function Page() {
   const [dragHover, setDragHover] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewURL, setPreviewURL] = useState<string | null>(null);
-  const [filter, setFilter] = useState<FilterKind>('none');
+  // const [filter, setFilter] = useState<FilterKind>('none');
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<'idle' | 'upload' | 'analyzing' | 'done' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
@@ -33,21 +34,12 @@ export default function Page() {
   const [shareOpen, setShareOpen] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
-  const [applyToAI, setApplyToAI] = useState(false);
+  // const [applyToAI, setApplyToAI] = useState(false);
   const { addItem } = useHistory();
 
   useEffect(() => () => { if (previewURL) URL.revokeObjectURL(previewURL); }, [previewURL]);
 
-  const filteredStyle = useMemo(() => {
-    switch (filter) {
-      case 'noir':
-        return { filter: 'grayscale(100%) contrast(120%) brightness(90%)' } as const;
-      case 'sepia':
-        return { filter: 'sepia(100%) contrast(110%)' } as const;
-      default:
-        return {} as const;
-    }
-  }, [filter]);
+  // Filters removed; no style transforms
 
   async function onPick(file: File) {
     setError(null);
@@ -87,11 +79,7 @@ export default function Page() {
     if (!imageFile) return;
     try {
       setLoading(true); setProgress('upload');
-      let fileForAI = imageFile;
-      if (applyToAI && filter !== 'none') {
-        try { fileForAI = await applyFilterToImageForAI(imageFile, filter); } catch {}
-      }
-      const base64 = await fileToBase64(fileForAI);
+      const base64 = await fileToBase64(imageFile);
       setProgress('analyzing');
       const res = await fetch('/api/analyze', {
         method: 'POST',
@@ -124,7 +112,7 @@ export default function Page() {
     if (!previewURL || !report) return;
     try {
       setExporting(true);
-      const blob = await exportCompositeImage({ src: previewURL, caseId: report.caseId, report: report.report, filter, useShortText: false });
+      const blob = await exportCompositeImage({ src: previewURL, caseId: report.caseId, report: report.report, filter: 'none', useShortText: false });
       const file = new File([blob], `crime-scene-${report.caseId}.png`, { type: 'image/png' });
       const canShareFile = typeof navigator !== 'undefined' && 'canShare' in navigator && (navigator as any).canShare?.({ files: [file] });
       if (typeof (navigator as any).share === 'function' && canShareFile) {
@@ -144,7 +132,7 @@ export default function Page() {
   }
 
   function reset() {
-    setImageFile(null); setPreviewURL(null); setReport(null); setError(null); setProgress('idle'); setFilter('none');
+    setImageFile(null); setPreviewURL(null); setReport(null); setError(null); setProgress('idle');
   }
 
   return (
@@ -154,7 +142,7 @@ export default function Page() {
         <section className="mt-6">
           <div className="mb-4">
             <div className="flex items-center gap-3">
-              <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-8 w-8 rounded-md border border-crime-border object-cover" />
+              <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-24 w-24 rounded-md border border-crime-border object-cover" />
               <h2 className="text-2xl font-semibold tracking-tight">Upload Evidence</h2>
             </div>
             <p className="mt-1 text-neutral-400 text-sm">Drop a photo or use your camera. We’ll generate a tongue‑in‑cheek detective report.</p>
@@ -170,12 +158,12 @@ export default function Page() {
               <div className="flex gap-3 mt-1">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
                 <label className="btn btn-primary cursor-pointer">
-                  <input type="file" accept="image/*,.heic,.heif" capture="environment" className="hidden"
+                  <input type="file" accept="image/*,.heic,.heif,image/heic,image/heif,image/heic-sequence,image/heif-sequence" capture="environment" className="hidden"
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) onPick(f); }} />
                   Use Camera
                 </label>
               </div>
-              <input ref={inputRef} type="file" accept="image/*,.heic,.heif" className="hidden"
+              <input ref={inputRef} type="file" accept="image/*,.heic,.heif,image/heic,image/heif,image/heic-sequence,image/heif-sequence" className="hidden"
                      onChange={(e)=>{const f=e.target.files?.[0]; if (f) onPick(f);}} />
             </div>
           </div>
@@ -190,16 +178,7 @@ export default function Page() {
       {previewURL && !report && (
         <section className="mt-6 space-y-4">
           <div className="relative">
-            <img src={previewURL} alt="Preview" className="w-full rounded-2xl border border-crime-border shadow-crime cursor-zoom-in" style={filteredStyle} onClick={() => setLightboxOpen(true)} />
-            <div className="absolute left-3 bottom-3 flex gap-2">
-              <button className={`btn ${filter==='none'?'btn-primary':'btn-ghost'}`} onClick={()=>setFilter('none')}>Original</button>
-              <button className={`btn ${filter==='noir'?'btn-primary':'btn-ghost'}`} onClick={()=>setFilter('noir')}>Noir</button>
-              <button className={`btn ${filter==='sepia'?'btn-primary':'btn-ghost'}`} onClick={()=>setFilter('sepia')}>Sepia</button>
-            </div>
-            <label className="ml-2 mt-2 inline-flex text-xs text-neutral-300 items-center gap-2 border border-crime-border rounded-xl px-2 py-1 bg-crime-surface/70">
-              <input type="checkbox" checked={applyToAI} onChange={(e)=>setApplyToAI(e.target.checked)} />
-              Apply to analysis
-            </label>
+            <img src={previewURL} alt="Preview" className="w-full max-h-[50vh] sm:max-h-none object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in" onClick={() => setLightboxOpen(true)} />
           </div>
 
           {error && progress === 'error' && (
@@ -227,8 +206,7 @@ export default function Page() {
                 <img
                   src={previewURL}
                   alt="Analyzed photo"
-                  className="w-full rounded-2xl border border-crime-border shadow-crime cursor-zoom-in"
-                  style={filteredStyle}
+                  className="w-full max-h-[45vh] sm:max-h-none object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in"
                   onClick={() => setLightboxOpen(true)}
                 />
               )}
@@ -236,8 +214,8 @@ export default function Page() {
             <div className="card p-5 max-h-[70vh] overflow-y-auto">
               <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
               <h2 className="mt-1 font-semibold text-xl tracking-tight">Crime Scene Report</h2>
-              <div className="mt-3 typewriter leading-7 text-[15px]">
-                <TypewriterText text={report.report}/>
+              <div className="mt-3 leading-7 text-[15px]">
+                <ReportSections text={report.report} />
               </div>
             </div>
           </div>
