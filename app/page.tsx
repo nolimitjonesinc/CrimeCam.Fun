@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 // Typewriter effect removed for report rendering in favor of sectioned layout
-import { ShareModal } from '@/components/ShareModal';
+// Removed separate share modal; share now generates composite and invokes OS share sheet
 import ColdOpenSplash from '@/components/splash/ColdOpenSplash';
 import { compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEICToJPEG } from '@/lib/utils';
 import Lightbox from '@/components/Lightbox';
@@ -31,7 +31,7 @@ export default function Page() {
   const [progress, setProgress] = useState<'idle' | 'upload' | 'analyzing' | 'done' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<Report | null>(null);
-  const [shareOpen, setShareOpen] = useState(false);
+  // const [shareOpen, setShareOpen] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
   // const [applyToAI, setApplyToAI] = useState(false);
@@ -108,7 +108,7 @@ export default function Page() {
     }
   }
 
-  async function doExport() {
+  async function doShare() {
     if (!previewURL || !report) return;
     try {
       setExporting(true);
@@ -211,7 +211,7 @@ export default function Page() {
                 />
               )}
             </div>
-            <div className="card p-5 max-h-[70vh] overflow-y-auto">
+            <div className="card p-5 pb-32 max-h-[70vh] overflow-y-auto">
               <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
               <h2 className="mt-1 font-semibold text-xl tracking-tight">Crime Scene Report</h2>
               <div className="mt-3 leading-7 text-[15px]">
@@ -221,17 +221,14 @@ export default function Page() {
           </div>
 
           <div className="fixed inset-x-0 bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border">
-            <div className="max-w-3xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="max-w-3xl mx-auto grid grid-cols-2 gap-3">
               <button className="btn btn-ghost" onClick={reset}>New Analysis</button>
-              <button className="btn btn-ghost" onClick={() => navigator.clipboard.writeText(report.report)}>Copy</button>
-              <button className="btn btn-primary" onClick={() => setShareOpen(true)}>Share</button>
-              <button className="btn btn-ghost" disabled={exporting} onClick={doExport}>{exporting ? 'Exporting…' : 'Export'}</button>
+              <button className="btn btn-primary" disabled={exporting} onClick={doShare}>{exporting ? 'Preparing…' : 'Share'}</button>
             </div>
           </div>
         </section>
       )}
 
-      <ShareModal open={shareOpen} onClose={() => setShareOpen(false)} textFull={report?.report ?? ''} textShort={report?.shortText ?? ''} />
       <Lightbox open={lightboxOpen} onClose={() => setLightboxOpen(false)} src={previewURL || ''} alt="Image preview" />
     </ColdOpenSplash>
   );
