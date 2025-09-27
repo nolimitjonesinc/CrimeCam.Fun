@@ -196,7 +196,7 @@ export default function Page() {
       )}
 
       {previewURL && !report && (
-        <section className="mt-6 space-y-4">
+        <section className="mt-6 space-y-4 pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}>
           <div className="relative">
             <img src={previewURL} alt="Preview" className="w-full max-h-[50vh] sm:max-h-none object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in" onClick={() => setLightboxOpen(true)} />
           </div>
@@ -207,7 +207,7 @@ export default function Page() {
             </motion.div>
           )}
 
-          <div className="fixed inset-x-0 bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border">
+          <div className="sticky bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border">
             <div className="max-w-3xl mx-auto flex gap-3">
               <button disabled={loading} className="btn btn-ghost flex-1" onClick={reset}>Back</button>
               <button disabled={loading} className="btn btn-primary flex-[2]" onClick={analyze}>
@@ -219,7 +219,7 @@ export default function Page() {
       )}
 
       {report && (
-        <section className="mt-6 pb-24">
+        <section className="mt-6 pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}>
           <div className="grid md:grid-cols-2 gap-4 items-start">
             <div className="space-y-2 md:sticky md:top-20 self-start">
               {previewURL && (
@@ -231,7 +231,7 @@ export default function Page() {
                 />
               )}
             </div>
-            <div className="card p-5 pb-32 max-h-[70vh] overflow-y-auto">
+            <div className="card p-5">
               <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
               <h2 className="mt-1 font-semibold text-xl tracking-tight">Crime Scene Report</h2>
               <div className="mt-3 leading-7 text-[15px]">
@@ -240,7 +240,7 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="fixed inset-x-0 bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border">
+          <div className="sticky bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
             <div className="max-w-3xl mx-auto grid grid-cols-2 gap-3">
               <button className="btn btn-ghost" onClick={reset}>New Analysis</button>
               <button className="btn btn-primary" disabled={exporting} onClick={doShare}>{exporting ? 'Preparing…' : 'Share'}</button>
