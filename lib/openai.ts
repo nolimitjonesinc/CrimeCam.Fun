@@ -1,6 +1,7 @@
 const OPENAI_API_KEY = (process.env.OPENAI_API_KEY as string)?.trim();
+import { getPresetById, type PresetId } from './presets';
 
-const SYSTEM_PROMPT = `
+const CRIME_SYSTEM_PROMPT = `
 You are a professional crime scene investigator who is extremely witty, sarcastic, and has a dry sense of humor. Your job is to "analyze" the provided image as if it's evidence in a bizarre crime case.
 
 Rules for your response:
@@ -8,7 +9,7 @@ Rules for your response:
 Use the format:
 Crime Scene Report – [Funny Title] Edition
 Crime Scene: 1–2 sentence dramatic description of what we're looking at.
-What's in the Frame? Short bulleted list sarcasting commenting only on visible key elements; bake the joke into this sentence; no setup/payoff later; do not re‑list these items in later sections.
+What's in the Frame? One punchy sentence (≤35 words) naming only the visible key elements; bake the joke into this sentence; no setup/payoff later; do not re‑list these items in later sections.
 What Might Have Happened Here: Comically exaggerated theories about the "crime" or situation without re‑describing the items above (refer to them generically if needed).
 How This Helps Solve the Crime: Ridiculous "clues" pulled from the image without repeating the full list of items (reference callbacks allowed, no item dump).
 Verdict: Short, punchy comedic conclusion.
@@ -24,17 +25,23 @@ Keep it under 250 words total; avoid repeating nouns across sections.
 Analyze the following image as if it's part of an ongoing investigation. Be clever, cinematic, and over-the-top funny.
 `;
 
-export async function analyzeImageWithPersona(imageBase64: string) {
+function buildSystemPrompt(mode?: PresetId | string) {
+  const preset = getPresetById(mode as any);
+  if (!mode || preset.id === 'crime') return CRIME_SYSTEM_PROMPT;
+  return preset.systemPrompt;
+}
+
+export async function analyzeImageWithPersona(imageBase64: string, mode?: PresetId | string) {
   if (!OPENAI_API_KEY) throw new Error('Missing OPENAI_API_KEY');
 
   const body = {
     model: 'gpt-5-mini', // Swap to 'gpt-5' for highest humor quality
     messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system', content: buildSystemPrompt(mode) },
       {
         role: 'user',
         content: [
-          { type: 'text', text: 'Analyze this image as a crime scene using your full storyteller personality from the system prompt.' },
+          { type: 'text', text: 'Analyze this image using the instructions in the system prompt.' },
           {
             type: 'image_url',
             image_url: {

@@ -73,8 +73,9 @@ export async function exportCompositeImage(opts: {
   report: string;
   filter: ExportFilter;
   useShortText?: boolean;
+  titleOverride?: string;
 }): Promise<Blob> {
-  const { src, caseId, report, filter, useShortText } = opts;
+  const { src, caseId, report, filter, useShortText, titleOverride } = opts;
 
   const img = await new Promise<HTMLImageElement>((resolve, reject) => {
     const i = new Image();
@@ -120,7 +121,7 @@ export async function exportCompositeImage(opts: {
   const imgScale = imgW / img.width;
   const imgH = Math.round(img.height * imgScale);
 
-  const title = `CASE #${caseId} — Crime Scene Report`;
+  const title = `CASE #${caseId} — ${titleOverride || 'Crime Scene Report'}`;
 
   // Compute height: padding + title + gap + image + gap + text + padding
   const gap = 24;

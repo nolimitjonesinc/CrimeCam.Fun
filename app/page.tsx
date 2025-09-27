@@ -7,6 +7,7 @@ import ColdOpenSplash from '@/components/splash/ColdOpenSplash';
 import { compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEICToJPEG } from '@/lib/utils';
 import Lightbox from '@/components/Lightbox';
 import { exportCompositeImage } from '@/lib/export';
+import { PRESETS, getPresetById, type PresetId } from '@/lib/presets';
 import { ReportSections } from '@/components/ReportSections';
 import { normalizeReport } from '@/lib/normalize';
 import { useHistory } from '@/components/history/useHistory';
@@ -26,6 +27,10 @@ export default function Page() {
   const [dragHover, setDragHover] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewURL, setPreviewURL] = useState<string | null>(null);
+  const [presetId, setPresetId] = useState<PresetId>(() => {
+    if (typeof window === 'undefined') return 'crime';
+    return (localStorage.getItem('crimecam_preset') as PresetId) || 'crime';
+  });
   // const [filter, setFilter] = useState<FilterKind>('none');
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<'idle' | 'upload' | 'analyzing' | 'done' | 'error'>('idle');
@@ -38,6 +43,7 @@ export default function Page() {
   const { addItem } = useHistory();
 
   useEffect(() => () => { if (previewURL) URL.revokeObjectURL(previewURL); }, [previewURL]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('crimecam_preset', presetId); }, [presetId]);
 
   // Filters removed; no style transforms
 
@@ -84,7 +90,7 @@ export default function Page() {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64 })
+        body: JSON.stringify({ imageBase64: base64, mode: presetId })
       });
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
@@ -112,7 +118,8 @@ export default function Page() {
     if (!previewURL || !report) return;
     try {
       setExporting(true);
-      const blob = await exportCompositeImage({ src: previewURL, caseId: report.caseId, report: report.report, filter: 'none', useShortText: false });
+      const exportTitle = getPresetById(presetId).exportTitle;
+      const blob = await exportCompositeImage({ src: previewURL, caseId: report.caseId, report: report.report, filter: 'none', useShortText: false, titleOverride: exportTitle });
       const file = new File([blob], `crime-scene-${report.caseId}.png`, { type: 'image/png' });
       const canShareFile = typeof navigator !== 'undefined' && 'canShare' in navigator && (navigator as any).canShare?.({ files: [file] });
       if (typeof (navigator as any).share === 'function' && canShareFile) {
@@ -154,6 +161,19 @@ export default function Page() {
             onDrop={(e) => { e.preventDefault(); setDragHover(false); const f = e.dataTransfer.files?.[0]; if (f) onPick(f); }}
           >
             <div className="flex flex-col items-center gap-3 text-center">
+              <div className="w-full overflow-x-auto no-scrollbar">
+                <div className="flex gap-2 pb-1">
+                  {PRESETS.map(p => (
+                    <button
+                      key={p.id}
+                      className={`px-3 py-1 rounded-full border ${presetId===p.id?'bg-yellow-300 text-black border-yellow-400':'border-crime-border text-neutral-300'} whitespace-nowrap`}
+                      onClick={() => setPresetId(p.id as PresetId)}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <p className="text-neutral-400 text-sm">JPG/PNG/HEIC · ≤10MB</p>
               <div className="flex gap-3 mt-1">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>

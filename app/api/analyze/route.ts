@@ -21,10 +21,10 @@ export async function POST(req: NextRequest) {
     if (!allow(ip)) {
       return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
-    const { imageBase64 } = await req.json();
+    const { imageBase64, mode } = await req.json();
     if (!imageBase64) return NextResponse.json({ error: 'Missing image' }, { status: 400 });
 
-    const result = await analyzeImageWithPersona(imageBase64);
+    const result = await analyzeImageWithPersona(imageBase64, mode);
     return NextResponse.json(result);
   } catch (e: any) {
     console.error('OpenAI API Error:', e);
@@ -36,4 +36,3 @@ export async function POST(req: NextRequest) {
     }, { status: 500 });
   }
 }
-
