@@ -1,21 +1,25 @@
 export type ExportFilter = 'none' | 'noir' | 'sepia';
 
-function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, lineHeight: number): string[] {
-  const words = text.replace(/\s+/g, ' ').trim().split(' ');
-  const lines: string[] = [];
-  let line = '';
-  for (const w of words) {
-    const testLine = line ? line + ' ' + w : w;
-    const metrics = ctx.measureText(testLine);
-    if (metrics.width > maxWidth && line) {
-      lines.push(line);
-      line = w;
-    } else {
-      line = testLine;
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  // Preserve explicit line breaks (e.g., micro-bullets). Wrap each line independently.
+  const paragraphs = String(text).replace(/\r\n?/g, '\n').split('\n');
+  const out: string[] = [];
+  for (const para of paragraphs) {
+    const words = para.trim().split(/\s+/).filter(Boolean);
+    if (words.length === 0) { out.push(''); continue; }
+    let line = '';
+    for (const w of words) {
+      const testLine = line ? line + ' ' + w : w;
+      if (ctx.measureText(testLine).width > maxWidth && line) {
+        out.push(line);
+        line = w;
+      } else {
+        line = testLine;
+      }
     }
+    if (line) out.push(line);
   }
-  if (line) lines.push(line);
-  return lines;
+  return out;
 }
 
 type Section = { title: string; content: string };
@@ -110,7 +114,7 @@ export async function exportCompositeImage(opts: {
   // Pre-measure lines per section
   const sectionBlocks: { title: string; lines: string[] }[] = parsed.sections.map(s => ({
     title: s.title,
-    lines: wrapText(ctx, s.content, innerW, bodyLH)
+    lines: wrapText(ctx, s.content, innerW)
   }));
   const totalTextLines = sectionBlocks.reduce((acc, b) => acc + b.lines.length, 0) + sectionBlocks.length; // +1 for each section title
 
