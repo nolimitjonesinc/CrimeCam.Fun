@@ -54,10 +54,6 @@ function parseReportSections(report: string): { subtitle?: string; sections: Sec
     else if (/how this helps solve the crime:/.test(rawTitle)) title = 'How This Helps Solve the Crime';
     else if (/verdict:/.test(rawTitle)) title = 'Verdict';
     let content = report.slice(start, end).trim();
-    // Enforce a concise single-sentence frame section
-    if (title === "What's in the Frame?") {
-      content = limitToOneSentence(content, 35);
-    }
     sections.push({ title, content });
   }
   return { subtitle, sections };
