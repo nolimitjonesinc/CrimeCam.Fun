@@ -78,24 +78,29 @@ export async function exportCompositeImage(opts: {
 }): Promise<Blob> {
   const { src, caseId, report, filter, useShortText, titleOverride, format = 'png' } = opts;
 
-  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-    const i = new Image();
-    i.onload = () => resolve(i);
-    i.onerror = () => reject(new Error('Failed to load image'));
-    // blob: URLs are same-origin; crossOrigin not needed
-    i.src = src;
-  });
+  function loadImage(url: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const i = new Image();
+      i.onload = () => resolve(i);
+      i.onerror = () => reject(new Error('Failed to load image'));
+      i.src = url;
+    });
+  }
 
-  const W = 1080; // target width
-  const pad = 48;
+  const img = await loadImage(src);
+  let logo: HTMLImageElement | null = null;
+  try { logo = await loadImage('/crimecam-icon.jpg'); } catch {}
+
+  const W = 1080; // target width (portrait)
+  const pad = 64; // paper margin
   const innerW = W - pad * 2;
 
   // Title/body typography
-  const titleSize = 40; // px
-  const sectionTitleSize = 34;
+  const titleSize = 42; // px
+  const sectionTitleSize = 36;
   const bodySize = 30;
-  const titleLH = 48;
-  const sectionTitleLH = 42;
+  const titleLH = 50;
+  const sectionTitleLH = 44;
   const bodyLH = 40;
 
   const canvas = document.createElement('canvas');
@@ -115,40 +120,69 @@ export async function exportCompositeImage(opts: {
   }));
   const totalTextLines = sectionBlocks.reduce((acc, b) => acc + b.lines.length, 0) + sectionBlocks.length; // +1 for each section title
 
-  // Choose image size factor based on text length
-  let imgWidthFactor = 0.6; // 60% of inner width by default
-  if (totalTextLines > 70) imgWidthFactor = 0.45; // make image smaller for very long text
+  // Choose image size factor based on text length (paper layout)
+  let imgWidthFactor = 0.7; // 70% of inner width by default
+  if (totalTextLines > 70) imgWidthFactor = 0.5; // smaller for very long text
   const imgW = Math.round(innerW * imgWidthFactor);
   const imgScale = imgW / img.width;
   const imgH = Math.round(img.height * imgScale);
 
-  const title = `CASE #${caseId} — ${titleOverride || 'Crime Scene Report'}`;
+  const title = `${titleOverride || 'Crime Scene Report'}`;
 
-  // Compute height: padding + title + gap + image + gap + text + padding
-  const gap = 24;
+  // Compute height: header + gap + image + gap + text + padding
+  const gap = 28;
   // Text height includes section titles and their wrapped lines, with small section spacing
   const sectionGap = 12;
   const textHeight = sectionBlocks.reduce((h, b) => h + sectionTitleLH + b.lines.length * bodyLH + sectionGap, 0);
   const subtitleH = parsed.subtitle ? bodyLH : 0;
-  const H = pad + titleLH + (subtitleH ? gap / 2 + subtitleH : 0) + gap + imgH + gap + textHeight + pad;
+  const headerH = 140;
+  const H = headerH + (subtitleH ? gap / 2 + subtitleH : 0) + gap + imgH + gap + textHeight + pad;
 
   canvas.width = W;
   canvas.height = H;
 
-  // Background
-  ctx.fillStyle = '#0a0a0a';
+  // Paper background
+  ctx.fillStyle = '#f8f7f4';
   ctx.fillRect(0, 0, W, H);
 
-  // Card background
-  const cardX = pad * 0.5;
-  const cardY = pad * 0.5;
-  const cardW = W - pad;
-  const cardH = H - pad;
-  ctx.fillStyle = '#121212';
-  ctx.fillRect(cardX, cardY, cardW, cardH);
-  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  // Header area
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, headerH);
+  // Header bottom rule
+  ctx.strokeStyle = '#e5e7eb';
   ctx.lineWidth = 2;
-  ctx.strokeRect(cardX + 1, cardY + 1, cardW - 2, cardH - 2);
+  ctx.beginPath();
+  ctx.moveTo(0, headerH - 1);
+  ctx.lineTo(W, headerH - 1);
+  ctx.stroke();
+
+  // Logo
+  if (logo) {
+    const logoSize = 84;
+    ctx.drawImage(logo, pad, Math.round((headerH - logoSize) / 2), logoSize, logoSize);
+  }
+
+  // Header text: Brand and Case
+  ctx.fillStyle = '#111827';
+  ctx.font = `800 ${titleSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
+  ctx.fillText('CRIMECAM.FUN', pad + 100, 56);
+  ctx.font = `600 20px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
+  ctx.fillStyle = '#b91c1c';
+  ctx.fillText('THE CRIME-ISH UNIT', pad + 100, 84);
+  ctx.fillStyle = '#111827';
+  ctx.font = `600 22px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
+  const caseText = `CASE #${caseId}`;
+  const caseW = ctx.measureText(caseText).width;
+  ctx.fillText(caseText, W - pad - caseW, 56);
+
+  // Subtle stamp
+  ctx.save();
+  ctx.translate(W - 280, 38);
+  ctx.rotate(-0.25);
+  ctx.fillStyle = 'rgba(220, 38, 38, 0.15)';
+  ctx.font = `900 28px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
+  ctx.fillText('OFFICIAL REPORT', 0, 0);
+  ctx.restore();
 
   // Title
   ctx.fillStyle = '#e5e5e5';
@@ -156,11 +190,11 @@ export async function exportCompositeImage(opts: {
   ctx.fillText(title, pad, pad + titleLH);
 
   // Optional subtitle extracted from AI's heading
-  let y = pad + titleLH;
+  let y = headerH;
   if (parsed.subtitle) {
     y += gap / 2;
-    ctx.font = `500 ${bodySize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
-    ctx.fillStyle = '#cfcfcf';
+    ctx.font = `600 ${bodySize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
+    ctx.fillStyle = '#111827';
     ctx.fillText(parsed.subtitle, pad, y + bodyLH);
     y += bodyLH;
   }
@@ -168,7 +202,7 @@ export async function exportCompositeImage(opts: {
   // Image (with filter if any)
   const imgY = y + gap;
   // Canvas 2d supports CSS-style filters in modern browsers
-  if (filter === 'noir') ctx.filter = 'grayscale(100%) contrast(120%) brightness(90%)';
+  if (filter === 'noir') ctx.filter = 'grayscale(100%) contrast(115%) brightness(95%)';
   else if (filter === 'sepia') ctx.filter = 'sepia(100%) contrast(110%)';
   else ctx.filter = 'none';
   // Center the smaller image horizontally within content width
@@ -180,14 +214,14 @@ export async function exportCompositeImage(opts: {
   let textY = imgY + imgH + gap;
   for (const block of sectionBlocks) {
     // Section title
-    ctx.font = `700 ${sectionTitleSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
-    ctx.fillStyle = '#f3f4f6';
+    ctx.font = `800 ${sectionTitleSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
+    ctx.fillStyle = '#111827';
     textY += sectionTitleLH;
     ctx.fillText(block.title, pad, textY);
 
     // Section body
     ctx.font = `${bodySize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
-    ctx.fillStyle = '#d4d4d4';
+    ctx.fillStyle = '#1f2937';
     for (const line of block.lines) {
       textY += bodyLH;
       ctx.fillText(line, pad, textY);
