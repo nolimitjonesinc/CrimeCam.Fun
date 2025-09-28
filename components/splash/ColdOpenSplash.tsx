@@ -254,10 +254,22 @@ function RubberGloveAndStamp() {
 
 function HeaderBar({ collapsed = false }: { collapsed?: boolean }) {
   return (
-    <div className="z-10 relative w-full border-b border-white/10 bg-black/70 px-4 py-3 backdrop-blur">
-      {/* Left logo only (title moved to hero in page) */}
-      <div className="absolute left-4 top-1/2 -translate-y-1/2">
-        <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-10 w-10 sm:h-12 sm:w-12 rounded-md border border-white/10 object-cover" />
+    <div className="z-10 w-full">
+      <div className="crime-tape">
+        <div className="crime-tape-overlay">
+          <div className="relative mx-auto max-w-3xl px-4 py-4 sm:py-5">
+            <div className="grid grid-cols-3 items-center">
+              <div className="flex items-center">
+                <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-16 w-16 sm:h-20 sm:w-20 rounded-md border border-black/30 object-cover shadow" />
+              </div>
+              <div className="col-span-1 text-center">
+                <div className="text-2xl font-extrabold tracking-tight">CrimeCam.Fun</div>
+                <div className="text-yellow-300 text-xs sm:text-sm mt-0.5">The Crime‑ish Unit</div>
+              </div>
+              <div />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

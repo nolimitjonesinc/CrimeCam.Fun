@@ -148,9 +148,8 @@ export default function Page() {
       {!previewURL && (
         <section className="mt-6">
           <div className="mb-4 text-center">
-            <h1 className="text-3xl font-bold tracking-tight">CrimeCam.Fun</h1>
-            <div className="text-sm text-yellow-300 mt-1">The Crime‑ish Unit</div>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight">Upload Evidence</h2>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight">Upload Evidence</h2>
+            <p className="mt-2 text-neutral-300 text-sm">Present your evidence — we promise to overreact.</p>
           </div>
           <div
             className={`dropzone ${dragHover ? 'hover' : ''}`}
@@ -159,18 +158,17 @@ export default function Page() {
             onDrop={(e) => { e.preventDefault(); setDragHover(false); const f = e.dataTransfer.files?.[0]; if (f) onPick(f); }}
           >
             <div className="flex flex-col items-center gap-3 text-center">
-              <div className="w-full overflow-x-auto no-scrollbar">
-                <div className="flex gap-2 pb-1">
+              <div className="w-full max-w-sm">
+                <label className="block text-left text-sm text-neutral-300 mb-1">Mode</label>
+                <select
+                  value={presetId}
+                  onChange={(e)=>setPresetId(e.target.value as PresetId)}
+                  className="w-full rounded-xl bg-crime-surface border border-crime-border px-3 py-2 text-neutral-200"
+                >
                   {PRESETS.map(p => (
-                    <button
-                      key={p.id}
-                      className={`px-3 py-1 rounded-full border ${presetId===p.id?'bg-yellow-300 text-black border-yellow-400':'border-crime-border text-neutral-300'} whitespace-nowrap`}
-                      onClick={() => setPresetId(p.id as PresetId)}
-                    >
-                      {p.label}
-                    </button>
+                    <option key={p.id} value={p.id}>{p.label}</option>
                   ))}
-                </div>
+                </select>
               </div>
               <p className="text-neutral-400 text-sm">JPG/PNG/HEIC · ≤10MB</p>
               <div className="flex gap-3 mt-1">
