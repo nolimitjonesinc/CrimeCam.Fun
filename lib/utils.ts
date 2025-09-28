@@ -1,7 +1,8 @@
 export function generateCaseNumber() {
   const d = new Date();
   const pad = (n: number) => n.toString().padStart(2, '0');
-  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}`;
+  const rand = Math.random().toString(36).slice(2, 5).toUpperCase();
+  return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}-${rand}`;
 }
 
 export function isHEICFile(file: File): boolean {

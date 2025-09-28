@@ -119,8 +119,8 @@ export default function Page() {
     try {
       setExporting(true);
       const exportTitle = getPresetById(presetId).exportTitle;
-      const blob = await exportCompositeImage({ src: previewURL, caseId: report.caseId, report: report.report, filter: 'none', useShortText: false, titleOverride: exportTitle });
-      const file = new File([blob], `crime-scene-${report.caseId}.png`, { type: 'image/png' });
+      const blob = await exportCompositeImage({ src: previewURL, caseId: report.caseId, report: report.report, filter: 'none', useShortText: false, titleOverride: exportTitle, format: 'jpeg' });
+      const file = new File([blob], `crime-scene-${report.caseId}.jpg`, { type: 'image/jpeg' });
       const canShareFile = typeof navigator !== 'undefined' && 'canShare' in navigator && (navigator as any).canShare?.({ files: [file] });
       if (typeof (navigator as any).share === 'function' && canShareFile) {
         try { await (navigator as any).share({ files: [file], title: `Case #${report.caseId}`, text: 'Crime Scene Report' }); return; } catch {}

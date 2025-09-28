@@ -78,8 +78,9 @@ export async function exportCompositeImage(opts: {
   filter: ExportFilter;
   useShortText?: boolean;
   titleOverride?: string;
+  format?: 'png' | 'jpeg';
 }): Promise<Blob> {
-  const { src, caseId, report, filter, useShortText, titleOverride } = opts;
+  const { src, caseId, report, filter, useShortText, titleOverride, format = 'png' } = opts;
 
   const img = await new Promise<HTMLImageElement>((resolve, reject) => {
     const i = new Image();
@@ -198,7 +199,9 @@ export async function exportCompositeImage(opts: {
     textY += sectionGap; // extra spacing between sections
   }
 
-  const blob: Blob | null = await new Promise((resolve) => canvas.toBlob((b) => resolve(b), 'image/png', 0.95));
+  const mime = format === 'jpeg' ? 'image/jpeg' : 'image/png';
+  const quality = format === 'jpeg' ? 0.9 : 0.95;
+  const blob: Blob | null = await new Promise((resolve) => canvas.toBlob((b) => resolve(b), mime, quality));
   if (!blob) throw new Error('Export failed');
   return blob;
 }
