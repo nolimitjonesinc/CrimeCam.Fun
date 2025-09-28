@@ -63,7 +63,7 @@ export default function ColdOpenSplash({
   }, [done, onDone]);
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-black text-white">
+    <div className="relative h-dvh w-full overflow-auto bg-black text-white">
       <AnimatePresence>{!done && <ColdOpen onSkip={() => { localStorage.setItem(seenKey, "1"); setDone(true); onDone?.(); }} />}</AnimatePresence>
 
       {/* REVEALED APP */}
@@ -254,10 +254,15 @@ function RubberGloveAndStamp() {
 
 function HeaderBar({ collapsed = false }: { collapsed?: boolean }) {
   return (
-    <div className="z-10 flex w-full items-center gap-3 border-b border-white/10 bg-black/70 px-4 py-3 backdrop-blur">
-      <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-20 w-20 rounded-md border border-white/10 object-cover" />
-      <h1 className="text-sm font-semibold tracking-wider text-yellow-300">CRIMECAM.FUN — THE CRIME-ISH UNIT</h1>
-      <span className="ml-auto text-xs text-white/60">jurisdiction: questionable</span>
+    <div className="z-10 relative w-full border-b border-white/10 bg-black/70 px-4 py-3 backdrop-blur">
+      {/* Left logo */}
+      <div className="absolute left-4 top-1/2 -translate-y-1/2">
+        <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-16 w-16 rounded-md border border-white/10 object-cover" />
+      </div>
+      {/* Centered title */}
+      <h1 className="text-center text-sm font-semibold tracking-wider text-yellow-300">CRIMECAM.FUN — THE CRIME-ISH UNIT</h1>
+      {/* Right note */}
+      <span className="absolute right-4 top-1/2 -translate-y-1/2 hidden sm:block text-xs text-white/60">jurisdiction: questionable</span>
     </div>
   );
 }

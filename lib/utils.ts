@@ -21,25 +21,30 @@ export function isHEICFile(file: File): boolean {
 }
 
 export async function convertHEICToJPEG(file: File): Promise<File> {
+  const base = (file.name || 'image').replace(/\.(heic|heif)$/i, '') || 'image';
+  // 1) Try native decode (Safari can decode HEIC natively)
   try {
-    // Dynamic import to avoid SSR issues
-    const { default: heic2any } = await import('heic2any');
-    
-    const result = await heic2any({
-      blob: file,
-      toType: 'image/jpeg',
-      quality: 0.9
-    });
-    
-    // heic2any returns a blob or array of blobs
-    const jpegBlob = Array.isArray(result) ? result[0] : result;
-    
-    // Create a new file with JPEG extension
-    const originalName = file.name.replace(/\.(heic|heif)$/i, '');
-    return new File([jpegBlob], `${originalName}.jpg`, { type: 'image/jpeg' });
-  } catch (error) {
-    console.error('HEIC conversion failed:', error);
-    throw new Error('Failed to convert HEIC image. Please try a different image.');
+    const bitmap = await createImageBitmap(file);
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width; canvas.height = bitmap.height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas ctx missing');
+    ctx.drawImage(bitmap, 0, 0);
+    const blob: Blob = await new Promise((resolve, reject) =>
+      canvas.toBlob(b => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.9)
+    );
+    return new File([blob], `${base}.jpg`, { type: 'image/jpeg' });
+  } catch (nativeErr) {
+    // 2) Fallback to WASM decoder (heic2any)
+    try {
+      const { default: heic2any } = await import('heic2any');
+      const result = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
+      const jpegBlob = Array.isArray(result) ? result[0] : result;
+      return new File([jpegBlob], `${base}.jpg`, { type: 'image/jpeg' });
+    } catch (wasmErr) {
+      console.error('HEIC conversion failed (native + wasm):', nativeErr, wasmErr);
+      throw new Error('Failed to convert HEIC image on this browser. Try Safari or use a JPG/PNG.');
+    }
   }
 }
 
