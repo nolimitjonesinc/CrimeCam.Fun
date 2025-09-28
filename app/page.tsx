@@ -152,7 +152,7 @@ export default function Page() {
               <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-24 w-24 rounded-md border border-crime-border object-cover" />
               <h2 className="text-2xl font-semibold tracking-tight">Upload Evidence</h2>
             </div>
-            <p className="mt-1 text-neutral-400 text-sm">Drop a photo or use your camera. We’ll generate a tongue‑in‑cheek detective report.</p>
+            {/* Helper text removed per request */}
           </div>
           <div
             className={`dropzone ${dragHover ? 'hover' : ''}`}
