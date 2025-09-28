@@ -147,12 +147,10 @@ export default function Page() {
       {/* Upload / Preview */}
       {!previewURL && (
         <section className="mt-6">
-          <div className="mb-4">
-            <div className="flex items-center gap-3">
-              <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-24 w-24 rounded-md border border-crime-border object-cover" />
-              <h2 className="text-2xl font-semibold tracking-tight">Upload Evidence</h2>
-            </div>
-            {/* Helper text removed per request */}
+          <div className="mb-4 text-center">
+            <h1 className="text-3xl font-bold tracking-tight">CrimeCam.Fun</h1>
+            <div className="text-sm text-yellow-300 mt-1">The Crime‑ish Unit</div>
+            <h2 className="mt-4 text-2xl font-semibold tracking-tight">Upload Evidence</h2>
           </div>
           <div
             className={`dropzone ${dragHover ? 'hover' : ''}`}
