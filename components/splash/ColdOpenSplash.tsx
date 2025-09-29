@@ -257,22 +257,39 @@ function HeaderBar({ collapsed = false }: { collapsed?: boolean }) {
     <div className="z-10 w-full">
       <div className="crime-tape">
         <div className="crime-tape-overlay">
-          <div className="mx-auto max-w-5xl px-4 py-5 sm:py-6">
-            <div className="grid grid-cols-3 items-center">
-              <div className="flex items-center">
-                <img
-                  src="/crimecam-icon.jpg"
-                  alt="CrimeCam.Fun"
-                  className="h-16 w-16 sm:h-24 sm:w-24 md:h-28 md:w-28 rounded-full border-2 border-black/30 object-cover shadow"
-                />
-              </div>
+          <div className="mx-auto max-w-5xl px-4 py-5 sm:py-6 relative">
+            {/* Mobile layout: logo small, nudged left; brand centered */}
+            <div className="sm:hidden relative">
+              <img
+                src="/crimecam-icon.jpg"
+                alt="CrimeCam.Fun"
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full border-2 border-black/30 object-cover shadow"
+              />
               <div className="text-center">
-                <div className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-tight">CrimeCam.Fun</div>
-                <div className="mt-1 text-yellow-200 text-2xl sm:text-3xl font-semibold tracking-wide [text-shadow:0_1px_0_rgba(0,0,0,0.55)]">
+                <div className="text-4xl font-extrabold tracking-tight leading-tight">CrimeCam.Fun</div>
+                <div className="mt-0.5 text-yellow-200 text-xl font-semibold tracking-wide [text-shadow:0_1px_0_rgba(0,0,0,0.55)]">
                   The Crime‑ish Unit
                 </div>
               </div>
-              <div />
+            </div>
+            {/* Desktop layout: 3-col grid keeps brand truly centered */}
+            <div className="hidden sm:block">
+              <div className="grid grid-cols-3 items-center">
+                <div className="flex items-center">
+                  <img
+                    src="/crimecam-icon.jpg"
+                    alt="CrimeCam.Fun"
+                    className="h-24 w-24 md:h-28 md:w-28 rounded-full border-2 border-black/30 object-cover shadow"
+                  />
+                </div>
+                <div className="text-center">
+                  <div className="text-6xl font-extrabold tracking-tight leading-tight">CrimeCam.Fun</div>
+                  <div className="mt-1 text-yellow-200 text-3xl font-semibold tracking-wide [text-shadow:0_1px_0_rgba(0,0,0,0.55)]">
+                    The Crime‑ish Unit
+                  </div>
+                </div>
+                <div />
+              </div>
             </div>
           </div>
         </div>
