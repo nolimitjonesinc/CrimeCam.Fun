@@ -147,9 +147,9 @@ export default function Page() {
       {/* Upload / Preview */}
       {!previewURL && (
         <section className="mt-6">
-          <div className="mb-4 text-center">
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">Upload Evidence</h2>
-            <p className="mt-2 text-neutral-300 text-sm">Present your evidence — we promise to overreact.</p>
+          <div className="mb-6 text-center">
+            <h2 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight">Upload Evidence</h2>
+            <p className="mt-3 text-neutral-300 text-base">Present your evidence — we promise to overreact.</p>
           </div>
           <div
             className={`dropzone ${dragHover ? 'hover' : ''}`}

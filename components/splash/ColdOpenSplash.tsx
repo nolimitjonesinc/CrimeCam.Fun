@@ -263,8 +263,8 @@ function HeaderBar({ collapsed = false }: { collapsed?: boolean }) {
                 <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-32 w-32 sm:h-40 sm:w-40 rounded-md border border-black/30 object-cover shadow" />
               </div>
               <div className="col-span-1 text-center">
-                <div className="text-2xl font-extrabold tracking-tight">CrimeCam.Fun</div>
-                <div className="text-yellow-300 text-xs sm:text-sm mt-0.5">The Crime‑ish Unit</div>
+                <div className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">CrimeCam.Fun</div>
+                <div className="text-yellow-300 text-sm sm:text-lg mt-1">The Crime‑ish Unit</div>
               </div>
               <div />
             </div>
