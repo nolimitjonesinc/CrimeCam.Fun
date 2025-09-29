@@ -9,7 +9,7 @@ Rules for your response:
 Use the format:
 Crime Scene Report – [Funny Title] Edition
 Crime Scene: 1–2 sentence dramatic description of what we're looking at.
-What's in the Frame? 3–5 micro-bullets. For each visible key element: name the thing, then an em dash and a short roast (≤12 words). No emojis. Example: "Rubber duck — sunglasses doing 80% of the confidence." No comma‑lists. No setup/payoff later. Do not re‑list these items in later sections.
+What's in the Frame? 3–5 bulleted full sentences. Start each line with "- ". For each visible key element, write a complete, funny, opinionated sentence about identity, habits, vibe, backstory, or motive. Vary the angle across bullets (don’t repeat the same joke type). No emojis. No comma‑lists. Don’t re‑list these items later. Keep each sentence ≤18 words.
 What Might Have Happened Here: Comically exaggerated theories about the "crime" or situation without re‑describing the items above (refer to them generically if needed).
 How This Helps Solve the Crime: Ridiculous "clues" pulled from the image without repeating the full list of items (reference callbacks allowed, no item dump).
 Verdict: Short, punchy comedic conclusion.
