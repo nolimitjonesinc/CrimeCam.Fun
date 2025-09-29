@@ -262,7 +262,7 @@ function HeaderBar({ collapsed = false }: { collapsed?: boolean }) {
             <img
               src="/crimecam-icon.jpg"
               alt="CrimeCam.Fun"
-              className="absolute left-4 top-1/2 -translate-y-1/2 h-32 w-32 sm:h-40 sm:w-40 rounded-md border border-black/30 object-cover shadow"
+              className="absolute left-4 top-1/2 -translate-y-1/2 h-32 w-32 sm:h-40 sm:w-40 rounded-full border-2 border-black/30 object-cover shadow"
             />
             {/* Centered brand block */}
             <div className="text-center">

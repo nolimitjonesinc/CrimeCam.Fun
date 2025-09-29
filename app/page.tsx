@@ -12,7 +12,7 @@ import { ReportSections } from '@/components/ReportSections';
 import { normalizeReport } from '@/lib/normalize';
 import { useHistory } from '@/components/history/useHistory';
 
-const MAX_SIZE_MB = 10;
+// Removed hard size limit; we still compress client-side
 
 // Filters removed
 
@@ -58,8 +58,7 @@ export default function Page() {
       return; 
     }
     
-    const sizeMb = file.size / (1024 * 1024);
-    if (sizeMb > MAX_SIZE_MB) { setError('Max size is 10MB.'); return; }
+    // No hard max size; large images will be compressed before upload
 
     let finalFile = file;
     try {
