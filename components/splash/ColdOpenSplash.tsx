@@ -260,7 +260,7 @@ function HeaderBar({ collapsed = false }: { collapsed?: boolean }) {
           <div className="relative mx-auto max-w-3xl px-4 py-4 sm:py-5">
             <div className="grid grid-cols-3 items-center">
               <div className="flex items-center">
-                <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-16 w-16 sm:h-20 sm:w-20 rounded-md border border-black/30 object-cover shadow" />
+                <img src="/crimecam-icon.jpg" alt="CrimeCam.Fun" className="h-32 w-32 sm:h-40 sm:w-40 rounded-md border border-black/30 object-cover shadow" />
               </div>
               <div className="col-span-1 text-center">
                 <div className="text-2xl font-extrabold tracking-tight">CrimeCam.Fun</div>
