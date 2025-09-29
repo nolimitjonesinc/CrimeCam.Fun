@@ -54,7 +54,7 @@ export default function Page() {
     // Check if it's a HEIC file or regular image
     const isHeic = isHEICFile(file);
     if (!file.type.startsWith('image/') && !isHeic) { 
-      setError('Unsupported file type. Use JPG/PNG/HEIC.'); 
+      setError('Unsupported file type.'); 
       return; 
     }
     
@@ -170,7 +170,7 @@ export default function Page() {
                   ))}
                 </select>
               </div>
-              <p className="text-neutral-400 text-sm">JPG/PNG/HEIC · ≤10MB</p>
+              {/* Removed file type/size hint per request */}
               <div className="flex gap-3 mt-1">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
                 <label className="btn btn-primary cursor-pointer">
