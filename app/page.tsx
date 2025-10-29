@@ -9,6 +9,7 @@ import Lightbox from '@/components/Lightbox';
 import { exportCompositeImage } from '@/lib/export';
 import { PRESETS, getPresetById, type PresetId } from '@/lib/presets';
 import { ReportSections } from '@/components/ReportSections';
+import { GroupRoastCarousel } from '@/components/GroupRoastCarousel';
 import { normalizeReport } from '@/lib/normalize';
 import { useHistory } from '@/components/history/useHistory';
 
@@ -228,9 +229,15 @@ export default function Page() {
             </div>
             <div className="card p-5">
               <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
-              <h2 className="mt-1 font-semibold text-xl tracking-tight">Crime Scene Report</h2>
+              <h2 className="mt-1 font-semibold text-xl tracking-tight">
+                {presetId === 'group_roast' ? 'Group Analysis' : 'Crime Scene Report'}
+              </h2>
               <div className="mt-3 leading-7 text-[15px]">
-                <ReportSections text={report.report} />
+                {presetId === 'group_roast' ? (
+                  <GroupRoastCarousel text={report.report} />
+                ) : (
+                  <ReportSections text={report.report} />
+                )}
               </div>
             </div>
           </div>
