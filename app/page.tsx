@@ -84,20 +84,25 @@ export default function Page() {
   async function analyze() {
     if (!imageFile) return;
     try {
+      console.log('🔍 [CLIENT] Starting analysis, preset:', presetId);
       setLoading(true); setProgress('upload');
       const base64 = await fileToBase64(imageFile);
+      console.log('🔍 [CLIENT] Image converted to base64, length:', base64.length);
       setProgress('analyzing');
+      console.log('🔍 [CLIENT] Sending request to /api/analyze...');
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64: base64, mode: presetId })
       });
+      console.log('🔍 [CLIENT] Response received, status:', res.status);
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        console.error('API Error:', errorData);
+        console.error('🔍 [CLIENT] API Error:', errorData);
         throw new Error(`Analyze failed (${res.status}): ${errorData.error || 'Unknown error'}`);
       }
       const data = await res.json();
+      console.log('🔍 [CLIENT] Success! Report length:', data.report?.length || 0);
       const caseId = generateCaseNumber();
       let report: string = data.report ?? 'Case file corrupted. Investigation inconclusive.';
       try { report = normalizeReport(report); } catch {}
