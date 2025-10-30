@@ -16,20 +16,37 @@ function allow(ip: string, max = 12, intervalMs = 60_000) {
 }
 
 export async function POST(req: NextRequest) {
+  console.log('🔍 [ANALYZE] Request received');
+
   try {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'anon';
+    console.log('🔍 [ANALYZE] IP:', ip);
+
     if (!allow(ip)) {
+      console.log('🔍 [ANALYZE] Rate limit exceeded for IP:', ip);
       return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
-    const { imageBase64, mode } = await req.json();
-    if (!imageBase64) return NextResponse.json({ error: 'Missing image' }, { status: 400 });
 
+    const { imageBase64, mode } = await req.json();
+    console.log('🔍 [ANALYZE] Mode:', mode, '| Image length:', imageBase64?.length || 0);
+
+    if (!imageBase64) {
+      console.log('🔍 [ANALYZE] ERROR: Missing image');
+      return NextResponse.json({ error: 'Missing image' }, { status: 400 });
+    }
+
+    console.log('🔍 [ANALYZE] Calling OpenAI...');
     const result = await analyzeImageWithPersona(imageBase64, mode);
+    console.log('🔍 [ANALYZE] OpenAI success! Report length:', result.report?.length || 0);
+
     return NextResponse.json(result);
   } catch (e: any) {
-    console.error('OpenAI API Error:', e);
+    console.error('🔍 [ANALYZE] ERROR:', e);
+    console.error('🔍 [ANALYZE] Stack:', e.stack);
+    console.error('🔍 [ANALYZE] OpenAI Key:', OPENAI_API_KEY ? 'present' : 'missing');
+
     // Send error back to see what's actually failing
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: `OpenAI failed: ${e.message}`,
       stack: e.stack,
       openaiKey: OPENAI_API_KEY ? 'present' : 'missing'

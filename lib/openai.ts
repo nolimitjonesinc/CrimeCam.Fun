@@ -60,7 +60,12 @@ function buildSystemPrompt(mode?: PresetId | string) {
 }
 
 export async function analyzeImageWithPersona(imageBase64: string, mode?: PresetId | string) {
-  if (!OPENAI_API_KEY) throw new Error('Missing OPENAI_API_KEY');
+  console.log('🔍 [OPENAI] Starting analysis, mode:', mode);
+
+  if (!OPENAI_API_KEY) {
+    console.error('🔍 [OPENAI] ERROR: Missing OPENAI_API_KEY');
+    throw new Error('Missing OPENAI_API_KEY');
+  }
 
   const body = {
     model: 'gpt-5-mini', // Swap to 'gpt-5' for highest humor quality
@@ -85,6 +90,7 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
     max_completion_tokens: 3000
   } as const;
 
+  console.log('🔍 [OPENAI] Sending request to OpenAI API...');
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -94,11 +100,19 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
     body: JSON.stringify(body)
   });
 
+  console.log('🔍 [OPENAI] Response status:', res.status);
+
   if (!res.ok) {
     const errorText = await res.text();
+    console.error('🔍 [OPENAI] ERROR Response:', errorText);
     throw new Error(`OpenAI error: ${res.status} - ${errorText}`);
   }
+
   const data = await res.json();
+  console.log('🔍 [OPENAI] Response data received, choices:', data.choices?.length || 0);
+
   const report = data.choices?.[0]?.message?.content ?? 'Case file corrupted. Investigation inconclusive.';
+  console.log('🔍 [OPENAI] Report extracted, length:', report.length);
+
   return { report };
 }
