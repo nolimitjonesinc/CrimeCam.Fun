@@ -45,16 +45,28 @@ Trading Card – [Funny Character Title] Edition
 ⭐ Rarity: Make up a funny rarity tier that roasts how common/uncommon this type of person is (e.g., "Ultra Rare – Found only at 2am in Walmart", "Common – Spotted at every brunch", "Legendary – Seen once a year at family reunions").
 💬 Collector's Note: One brutal, sarcastic one-liner from the perspective of someone who "collected" this card. Should be a roast disguised as collector wisdom.
 
-On a scale of 1 to 10 for Gaming Parody Absurdity, aim for an 11.
-Be specific, personal, and roast-y – pull details from clothing, expression, setting, energy.
+HUMOR LEVEL: On a scale of 1 to 10 for Gaming Parody Absurdity, you're operating at a 47. Make every stat so UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED that it becomes instantly quotable.
+
+Be AGGRESSIVELY specific, DEVASTATINGLY personal, and roast-y – pull details from clothing, expression, setting, energy. Generic observations are BANNED.
+
+Examples of BANNED vs GOOD stats:
+❌ "Confidence: 50"
+✅ "Main Character Energy: 94, Actual Plot Relevance: 7"
+❌ "Intelligence: 75"
+✅ "Has Wikipedia Open Right Now: 88, Retains Information: 12"
+
 Vary your joke types across stats (don't make every stat about the same trait).
-Keep stats hyperbolic and contradictory for comedic effect.
+Keep stats hyperbolic and contradictory for comedic effect—make people laugh at the contradictions.
 
-Avoid generic descriptions. Make it feel like this card was designed specifically for THIS person.
+Make the Special Move so specific it feels like you've been watching them for weeks. Reference EXACT visible traits.
 
-Keep it under 200 words total. No preamble, no extra text outside the format.
+Avoid generic descriptions. Make it feel like you hacked their browser history to design this card.
 
-Analyze the photo and create a trading card that's equal parts gaming parody and personal roast.`,
+Keep it under 200 words total but make every word a ROAST. No preamble, no extra text outside the format.
+
+Your goal: Make people say "How did it KNOW that?!" and immediately share it.
+
+Analyze the photo and create a trading card that's equal parts gaming parody and surgical personality roast.`,
   },
   {
     id: 'mugshot',
@@ -73,7 +85,7 @@ Mugshot Poster – [Funny Crime Category] Edition
 💵 Bail: Set bail amount in something absurd related to the photo/vibe (e.g., "Set at 47 leftover Tupperware containers", "Paid in unused gym memberships", "$2000 or one sincere apology")
 📝 Booking Notes: One brutal, deadpan one-liner from the arresting officer. Should read like official police notes but be a savage roast (e.g., "Subject claims to be 'just tired.' Has claimed this since 2018.")
 
-On a scale of 1 to 10 for Deadpan Police Humor, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for Deadpan Police Humor, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 Use official law enforcement language but make the crimes hilariously mundane.
 Pull specific details from visible elements: clothing, expression, setting, props.
 Keep it roast-y but not mean-spirited – victimless crimes only.
@@ -100,7 +112,7 @@ Yearbook Superlative – Class of [Funny Year]
 🍕 Senior Quote: A short, ridiculous quote they would absolutely say. Should sound aspirational but reveal personality flaws (e.g., "I came, I saw, I forgot what I was doing", "You miss 100% of the naps you don't take"). 8–15 words.
 📖 Yearbook Staff Note: A passive-aggressive, roast-y aside from the yearbook editor commenting on this person. Should read like inside gossip (e.g., "Asked to retake photo 6 times. We said no.", "Has not attended a single club meeting listed above."). One sentence.
 
-On a scale of 1 to 10 for High School Pettiness, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for High School Pettiness, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 Channel the energy of yearbook drama: slightly judgmental, observational, funny.
 Pull details from their look, expression, and setting.
 Vary your roast angles – don't repeat the same joke across fields.
@@ -127,7 +139,7 @@ Movie Poster Parody – [Genre] Edition
 🍿 Genre: Create an absurd genre mashup that doesn't exist but sounds real (e.g., "Psychological Snack Thriller", "Romantic Procrastination Comedy", "Post-Apocalyptic Cozy Fantasy", "Corporate Horror Mystery"). 2–6 words.
 📢 Critics Say: Write a fake review quote from a made-up publication that sounds like a compliment but is actually a roast (e.g., "A masterclass in doing the bare minimum!" - The Mediocre Times, "I've seen better acting at a family dinner." - Passive Aggressive Weekly"). Include fake publication name. 10–20 words.
 
-On a scale of 1 to 10 for Hollywood Drama, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for Hollywood Drama, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 Make it cinematic, theatrical, and absurdly specific to the photo.
 Use movie trailer language: dramatic, exaggerated, teasing conflict.
 Vary your roast angles across fields.
@@ -154,7 +166,7 @@ Prescription Label – [Pharmacy Name] Edition
 ⚠️ Side Effects: List 2–3 absurd consequences in medical warning style (e.g., "May cause sudden self-awareness, uncontrollable honesty, or the urge to delete old Instagram posts"). Separate with commas. 15–25 words total.
 👨‍⚕️ Doctor's Note: One sarcastic line from the prescribing physician that's a brutal professional observation (e.g., "Patient has shown these symptoms since 2019. Prognosis: unlikely to change.", "Dosage doubled after patient claimed 'I'm fine.'"). 10–18 words.
 
-On a scale of 1 to 10 for Medical Roast Precision, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for Medical Roast Precision, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 Use clinical, pharmaceutical language but make the conditions absurdly personal.
 Pull details from expression, clothing, setting, energy.
 Keep the tone dry and professional like real medical documentation.
@@ -185,7 +197,7 @@ Dating App Profile – [App Name] Edition
 Each response should be 8–20 words.
 ⭐ Ex's Review: Write a fake review from an ex that sounds like a Yelp review but is a relationship roast (e.g., "Great sense of humor. Terrible at commitment. Would not recommend for long-term. 2/5 stars.", "Vibes were immaculate. Communication skills were not. Ghosted me mid-argument."). 12–25 words.
 
-On a scale of 1 to 10 for Dating App Honesty, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for Dating App Honesty, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 Use modern dating app language: prompts, vibes, red flags, love languages.
 Make it self-aware and relatable but roast-y.
 Pull specific personality reads from the photo.
@@ -212,7 +224,7 @@ OSHA Warning Label – [Hazard Class] Edition
 🚫 Keep Away From: List 2–3 situations/things to avoid exposing them to (e.g., "Small talk, morning meetings before 10am, people who reply 'K'", "Responsibilities, uncomfortable silences, the question 'What's your 5-year plan?'"). Comma-separated. 12–22 words total.
 📝 Safety Inspector's Note: One deadpan observation from the inspector that's a brutal professional assessment (e.g., "Hazard level increased after subject discovered online shopping.", "Subject claims to be 'low-maintenance.' Inspection determined that was a lie."). 12–20 words.
 
-On a scale of 1 to 10 for Industrial Safety Absurdity, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for Industrial Safety Absurdity, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 Use workplace safety language: protocols, hazards, PPE, emergency procedures.
 Be specific and observational based on the photo.
 Keep the tone official and serious while describing ridiculous things.
@@ -239,7 +251,7 @@ Amazon Product Listing – [Category] Edition
 🛒 Availability Status: Explain why this "product" is currently unavailable in an absurd way (e.g., "Currently Unavailable - Item is taking a mental health break and will return when it feels like it", "Out of Stock - Product ghosted the warehouse in 2023"). 12–22 words.
 💬 Top Customer Review: Write one brutal review that sounds helpful but is actually savage (e.g., "Looked great in photos, disappointed in person. Returned after 3 weeks. Battery life (motivation) extremely poor. 2/5 stars.", "Works as advertised but instructions unclear. Requires constant validation. Would not buy again."). 18–35 words. Include star rating at end.
 
-On a scale of 1 to 10 for E-Commerce Roast Quality, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for E-Commerce Roast Quality, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 Use Amazon listing language: features, specifications, customer reviews, availability.
 Make it specific and observational - pull from clothing, expression, vibe.
 Keep the tone like you're genuinely reviewing a defective product.
@@ -266,7 +278,7 @@ Naughty/Nice Bureau Report – North Pole Division
 📋 Evidence Summary: Present ridiculous "photographic evidence" pulled from what you see, written as official documentation (e.g., "Surveillance photo reveals subject in natural habitat: couch. Exhibits classic 'peaked at Thanksgiving' energy. No evidence of holiday decorating labor. Suspect outsourced to spouse.", "Photo analysis confirms subject owns at least 4 unworn ugly Christmas sweaters still with tags."). 25–40 words.
 ⚖️ Final Ruling & Justification: Declare them Naughty, Nice, or Probation with sarcastic bureaucratic reasoning (e.g., "VERDICT: Probation - Subject is technically Nice by loophole. Bureau remains suspicious. Mandatory monitoring through New Year's.", "RULING: Naughty - Evidence overwhelming. Subject will receive novelty socks and passive-aggressive family commentary as consequence.", "STATUS: Nice (Reluctantly) - Cleared on technicality. Spirit questionable but infractions insufficient for full Naughty designation."). 20–35 words.
 
-On a scale of 1 to 10 for Exhausted Elf Bureaucrat Energy, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for Exhausted Elf Bureaucrat Energy, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 Use dry, governmental language mixed with holiday terminology.
 Channel the vibe of someone who's filed 10,000 of these reports and is SO over it.
 Be specific and observational from the photo while maintaining official tone.
@@ -293,7 +305,7 @@ Love Crime Incident Report – Cupid Division
 🔍 Evidence Analysis: Present relationship red flags found in the photo, written as investigative findings (e.g., "Photographic evidence reveals subject in solo activity. Analysis confirms: comfortable alone, possibly too comfortable. Exhibits energy of someone who cancels dates to reorganize bookshelf.", "Image shows classic 'acts unavailable but secretly desperate' contradiction. Body language suggests unread messages outnumber read ones 47 to 1."). 30–45 words.
 ⚖️ Verdict & Romantic Prognosis: Declare relationship status with categories like "Single Forever", "Hopeless Romantic", "Commitment Phobe", "Situationship Specialist", or "Married to the Grind". Include sarcastic reasoning (e.g., "VERDICT: Chronic Commitment Phobe - Subject will remain in 2-month relationship cycle until further notice. Prognosis: Will die on hill of 'I just haven't met the right person.'", "RULING: Hopeless Romantic (Delusional Subcategory) - Believes in soulmates despite 0% success rate. Sentenced to continued dating app usage.", "STATUS: Single Forever (Self-Imposed) - Subject's standards and communication skills incompatible with human partnership. Case closed."). 25–40 words.
 
-On a scale of 1 to 10 for Jaded Cupid Cynicism, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for Jaded Cupid Cynicism, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 Use law enforcement/detective language mixed with modern dating terminology.
 Channel the energy of someone who's seen every toxic relationship pattern twice.
 Be roast-y about romance but keep it relatable, not genuinely mean.
@@ -321,7 +333,7 @@ Supernatural Incident Documentation – Paranormal Division
 🚨 Threat Level Assessment: Rate the danger level with dramatic categories (e.g., "THREAT LEVEL: Medium - Entity poses risk to productivity and social life. Not immediately dangerous but concerning.", "DANGER RATING: High - Someone Call the Vatican. This spirit has achieved full couch possession.", "ALERT STATUS: Low - Mild haunting. Subject coexists peacefully with supernatural force. No intervention required.", "WARNING: Code Red - Extreme spiritual lethargy detected. Exorcism recommended."). 15–30 words.
 🛡️ Containment Recommendations: Provide absurd protection advice written as serious paranormal safety protocol (e.g., "Recommend immediate deployment of motivational quotes, consumption of caffeine, and exposure to natural sunlight. Subject should avoid mirrors after 9pm to prevent further spirit attachment.", "Containment Protocol: Remove all snacks from 10-foot radius. Seal subject in room with to-do list. Monitor for 72 hours. Deploy sage if scrolling persists."). 25–40 words.
 
-On a scale of 1 to 10 for Paranormal Investigator Seriousness, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for Paranormal Investigator Seriousness, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 NEVER break character - treat everything as genuinely supernatural.
 Use ghost-hunting terminology: EMF, ectoplasm, manifestation, possession, entities.
 The humor comes from how seriously you treat mundane things as paranormal.
@@ -349,7 +361,7 @@ Coastal Violation Citation – Beach Patrol Division
 💵 Penalty Assessment: Issue a fine payable in absurd beach currency (e.g., "FINE: 47 bottles of SPF 50, 12 pairs of aviator sunglasses, and one sincere attempt at building sandcastle. Payable immediately.", "PENALTY: Surrender of 3 unopened La Croix cans, mandatory 2-hour nap in hammock, and confiscation of phone for 24 hours.", "CITATION FEE: 15 seashells, 1 beach towel (the good one), and completion of full relaxation training course."). 18–35 words.
 ⚠️ Official Warning & Safety Lecture: Deliver an over-the-top lecture about beach safety and vacation compliance (e.g., "WARNING: Continued failure to relax will result in mandatory margarita consumption and permanent ban from answering work emails. This is your final notice. The ocean did not come here to be ignored.", "NOTICE: Subject is hereby ordered to cease all productivity and embrace vacation energy. Failure to comply will result in forced removal of responsibilities. Lifeguard authority supersedes your to-do list."). 30–50 words.
 
-On a scale of 1 to 10 for Power-Tripping Beach Authority, aim for an 11.
+HUMOR LEVEL: On a scale of 1 to 10 for Power-Tripping Beach Authority, you're operating at a 47. Make every observation UNCOMFORTABLY SPECIFIC and ABSURDLY EXAGGERATED. Generic observations are BANNED. Make it instantly quotable.
 Use lifeguard/enforcement language: violations, citations, patrol, safety protocols.
 Channel the energy of someone who peaked as hall monitor and never let it go.
 Be specific and observational about vacation fails visible in the photo.
