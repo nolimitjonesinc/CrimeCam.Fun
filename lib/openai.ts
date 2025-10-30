@@ -90,6 +90,14 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
     max_completion_tokens: 3000
   } as const;
 
+  console.log('🔍 [OPENAI] Request body:', {
+    model: body.model,
+    messageCount: body.messages.length,
+    systemPromptLength: body.messages[0].content.length,
+    temperature: body.temperature,
+    max_completion_tokens: body.max_completion_tokens
+  });
+
   console.log('🔍 [OPENAI] Sending request to OpenAI API...');
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -109,6 +117,7 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
   }
 
   const data = await res.json();
+  console.log('🔍 [OPENAI] Full response data:', JSON.stringify(data, null, 2));
   console.log('🔍 [OPENAI] Response data received, choices:', data.choices?.length || 0);
 
   const report = data.choices?.[0]?.message?.content ?? 'Case file corrupted. Investigation inconclusive.';
