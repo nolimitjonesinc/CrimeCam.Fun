@@ -60,6 +60,7 @@ function buildSystemPrompt(mode?: PresetId | string) {
 }
 
 export async function analyzeImageWithPersona(imageBase64: string, mode?: PresetId | string) {
+  const startTime = Date.now();
   console.log('🔍 [OPENAI] Starting analysis, mode:', mode);
 
   if (!OPENAI_API_KEY) {
@@ -121,7 +122,9 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
   console.log('🔍 [OPENAI] Response data received, choices:', data.choices?.length || 0);
 
   const report = data.choices?.[0]?.message?.content ?? 'Case file corrupted. Investigation inconclusive.';
+  const duration = Date.now() - startTime;
   console.log('🔍 [OPENAI] Report extracted, length:', report.length);
+  console.log('🔍 [OPENAI] Total duration:', duration, 'ms');
 
   return { report };
 }

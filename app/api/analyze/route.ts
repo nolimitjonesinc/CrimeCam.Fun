@@ -4,6 +4,7 @@ import { analyzeImageWithPersona } from '@/lib/openai';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 export const runtime = 'nodejs';
+export const maxDuration = 60; // Allow up to 60 seconds for OpenAI response
 
 // naive in-memory rate limiter (per IP)
 const windows: Record<string, number[]> = {};
