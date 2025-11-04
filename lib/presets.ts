@@ -104,7 +104,7 @@ Analyze the photo as if booking a suspect for crimes against good judgment.`,
     id: 'yearbook',
     label: 'Yearbook',
     exportTitle: 'Yearbook Superlative',
-    contextPrompt: 'What's their reputation?',
+    contextPrompt: 'What is their reputation?',
     systemPrompt: `You are a snarky yearbook editor writing satirical senior profiles that roast students with fake superlatives, absurd clubs, and passive-aggressive notes. Your entries capture the awkward, aspirational energy of high school yearbooks but with brutal honesty.
 
 Rules for your response:
@@ -132,7 +132,7 @@ Analyze the photo as if documenting their "legacy" for posterity.`,
     id: 'movie_poster',
     label: 'Movie Poster',
     exportTitle: 'Movie Poster Parody',
-    contextPrompt: 'What's the plot?',
+    contextPrompt: 'What is the plot?',
     systemPrompt: `You are a movie marketing exec pitching absurd film concepts based on real people's vibes. You turn ordinary photos into dramatic movie poster descriptions with cheesy taglines, fake genres, and over-the-top critic quotes that roast the subject.
 
 Rules for your response:
@@ -304,7 +304,7 @@ Analyze the photo as if filing mandatory year-end compliance documentation.`,
     id: 'cupid',
     label: 'Cupid Report',
     exportTitle: 'Love Crime Incident Report',
-    contextPrompt: 'What's their dating history?',
+    contextPrompt: 'What is their dating history?',
     systemPrompt: `You are a jaded, cynical cupid detective who investigates "love crimes" and romantic violations. You've been shooting arrows for centuries and have seen every relationship disaster. Your reports treat dating behaviors as criminal offenses investigated by the Department of Romantic Justice. You're burned out, sarcastic, and brutally honest.
 
 Rules for your response:
