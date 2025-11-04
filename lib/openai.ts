@@ -59,13 +59,19 @@ function buildSystemPrompt(mode?: PresetId | string) {
   return preset.systemPrompt;
 }
 
-export async function analyzeImageWithPersona(imageBase64: string, mode?: PresetId | string) {
+export async function analyzeImageWithPersona(imageBase64: string, mode?: PresetId | string, context?: string) {
   const startTime = Date.now();
-  console.log('🔍 [OPENAI] Starting analysis, mode:', mode);
+  console.log('🔍 [OPENAI] Starting analysis, mode:', mode, '| context:', context ? 'provided' : 'none');
 
   if (!OPENAI_API_KEY) {
     console.error('🔍 [OPENAI] ERROR: Missing OPENAI_API_KEY');
     throw new Error('Missing OPENAI_API_KEY');
+  }
+
+  // Build user message with optional context
+  let userText = 'Analyze this image using the instructions in the system prompt.';
+  if (context && context.trim()) {
+    userText += `\n\nAdditional context provided by user: "${context.trim()}"`;
   }
 
   const body = {
@@ -75,7 +81,7 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
       {
         role: 'user',
         content: [
-          { type: 'text', text: 'Analyze this image using the instructions in the system prompt.' },
+          { type: 'text', text: userText },
           {
             type: 'image_url',
             image_url: {

@@ -38,6 +38,7 @@ export default function Page() {
   const [progress, setProgress] = useState<'idle' | 'upload' | 'analyzing' | 'done' | 'error'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [report, setReport] = useState<Report | null>(null);
+  const [context, setContext] = useState<string>('');
   // const [shareOpen, setShareOpen] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -94,7 +95,7 @@ export default function Page() {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64, mode: presetId })
+        body: JSON.stringify({ imageBase64: base64, mode: presetId, context: context || undefined })
       });
       console.log('🔍 [CLIENT] Response received, status:', res.status);
       if (!res.ok) {
@@ -201,6 +202,23 @@ export default function Page() {
         <section className="mt-8 space-y-6 pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}>
           <div className="relative group">
             <img src={previewURL} alt="Preview" className="w-full max-h-[50vh] sm:max-h-none object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in transition-all group-hover:border-neutral-600 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]" onClick={() => setLightboxOpen(true)} />
+          </div>
+
+          {/* Context Input */}
+          <div className="max-w-xl mx-auto">
+            <label className="block text-sm font-medium text-neutral-300 mb-2">
+              {getPresetById(presetId).contextPrompt}
+              <span className="text-neutral-500 ml-2">(Optional)</span>
+            </label>
+            <textarea
+              value={context}
+              onChange={(e) => setContext(e.target.value)}
+              placeholder={`e.g. "This is my roommate who never does dishes" or "They claim to be a morning person"`}
+              maxLength={150}
+              rows={2}
+              className="w-full rounded-xl bg-crime-surface border border-crime-border px-4 py-3 text-neutral-100 placeholder:text-neutral-500 resize-none transition-all hover:border-neutral-600 focus:border-crime-red focus:outline-none focus:ring-2 focus:ring-crime-red/20"
+            />
+            <div className="text-xs text-neutral-500 mt-1 text-right">{context.length}/150</div>
           </div>
 
           {error && progress === 'error' && (
