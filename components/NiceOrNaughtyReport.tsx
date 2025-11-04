@@ -3,7 +3,7 @@
 type Section = { title: string; content: string };
 
 function parseSections(text: string): Section[] {
-  const headerRegex = /(🎄 Case ID:|👤 Subject Assessment:|🚨 Infractions Detected:|📋 Evidence Summary:|⚖️ Final Ruling & Justification:)/gi;
+  const headerRegex = /(Case ID:|Subject Assessment:|Infractions Detected:|Evidence Summary:|Final Ruling & Justification:|Final Ruling:)/gi;
   const matches: { titleRaw: string; index: number }[] = [];
   let m: RegExpExecArray | null;
   while ((m = headerRegex.exec(text)) !== null) {
@@ -17,7 +17,7 @@ function parseSections(text: string): Section[] {
     const next = matches[i + 1];
     const start = cur.index + cur.titleRaw.length;
     const end = next ? next.index : text.length;
-    let title = cur.titleRaw.replace(/[🎄👤🚨📋⚖️]/g, '').trim();
+    let title = cur.titleRaw.trim();
     const content = text.slice(start, end).trim();
     sections.push({ title, content });
   }
