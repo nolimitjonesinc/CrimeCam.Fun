@@ -67,17 +67,17 @@ export function GroupRoastCarousel({ text }: { text: string }) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Navigation dots */}
-      <div className="flex justify-center gap-2 pb-2">
+      <div className="flex justify-center gap-2.5 pb-2">
         {people.map((_, idx) => (
           <button
             key={idx}
             onClick={() => setCurrentIndex(idx)}
-            className={`h-2 rounded-full transition-all ${
+            className={`h-2 rounded-full transition-all duration-300 ${
               idx === currentIndex
-                ? 'w-8 bg-crime-accent'
-                : 'w-2 bg-neutral-600 hover:bg-neutral-500'
+                ? 'w-8 bg-crime-red shadow-[0_0_12px_rgba(239,68,68,0.5)]'
+                : 'w-2 bg-neutral-600 hover:bg-neutral-500 hover:scale-125'
             }`}
             aria-label={`Go to person ${idx + 1}`}
           />
@@ -85,20 +85,20 @@ export function GroupRoastCarousel({ text }: { text: string }) {
       </div>
 
       {/* Person card */}
-      <div className="border border-crime-border rounded-xl p-5 bg-black/20 min-h-[280px] flex flex-col">
+      <div className="card p-6 min-h-[300px] flex flex-col">
         {/* Header */}
-        <div className="pb-4 border-b border-crime-border">
-          <div className="text-xs text-neutral-500 uppercase tracking-wider">Person #{current.number}</div>
-          <h3 className="text-xl font-semibold mt-1 tracking-tight">{current.archetype}</h3>
+        <div className="pb-5 border-b border-crime-border/50">
+          <div className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-1.5">Person #{current.number}</div>
+          <h3 className="text-xl font-bold mt-1 tracking-tight text-neutral-50 leading-tight">{current.archetype}</h3>
         </div>
 
         {/* Traits */}
-        <div className="flex-1 py-4 space-y-3">
+        <div className="flex-1 py-5 space-y-4">
           <div>
-            <h4 className="text-sm font-semibold text-neutral-400 mb-2">Traits</h4>
-            <ul className="space-y-2">
+            <h4 className="text-sm font-semibold text-neutral-400 mb-3 uppercase tracking-wide">Traits</h4>
+            <ul className="space-y-3">
               {current.traits.map((trait, idx) => (
-                <li key={idx} className="text-[15px] leading-relaxed pl-3 border-l-2 border-crime-accent/30">
+                <li key={idx} className="text-[15px] leading-relaxed pl-4 border-l-2 border-crime-red/40 text-neutral-200 transition-all hover:border-crime-red hover:pl-5">
                   {trait}
                 </li>
               ))}
@@ -108,8 +108,8 @@ export function GroupRoastCarousel({ text }: { text: string }) {
           {/* Evidence */}
           {current.evidence && (
             <div>
-              <h4 className="text-sm font-semibold text-neutral-400 mb-2">Evidence in Action</h4>
-              <p className="text-[15px] leading-relaxed text-neutral-300">
+              <h4 className="text-sm font-semibold text-neutral-400 mb-3 uppercase tracking-wide">Evidence in Action</h4>
+              <p className="text-[15px] leading-relaxed text-neutral-200 bg-black/30 p-3 rounded-lg border border-crime-border/30">
                 {current.evidence}
               </p>
             </div>
@@ -117,7 +117,7 @@ export function GroupRoastCarousel({ text }: { text: string }) {
         </div>
 
         {/* Counter */}
-        <div className="pt-4 border-t border-crime-border text-center text-sm text-neutral-500">
+        <div className="pt-4 border-t border-crime-border/50 text-center text-sm font-medium text-neutral-400">
           {currentIndex + 1} of {people.length}
         </div>
       </div>

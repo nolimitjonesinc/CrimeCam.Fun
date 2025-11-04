@@ -33,11 +33,16 @@ function parseSections(text: string): Section[] {
 export function ReportSections({ text }: { text: string }) {
   const sections = parseSections(text);
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {sections.map((s, idx) => (
-        <section key={idx}>
-          <h3 className="font-semibold text-[16px] tracking-tight">{s.title}</h3>
-          <p className="mt-2 leading-7 text-[15px] whitespace-pre-wrap">{s.content}</p>
+        <section key={idx} className="group">
+          <h3 className="font-semibold text-[17px] tracking-tight text-neutral-100 mb-3 flex items-center gap-2">
+            <span className="inline-block w-1 h-4 bg-crime-red rounded-full group-hover:h-5 transition-all duration-200" />
+            {s.title}
+          </h3>
+          <p className="leading-[1.75] text-[15px] text-neutral-200 whitespace-pre-wrap tracking-[-0.01em]">
+            {s.content}
+          </p>
         </section>
       ))}
     </div>

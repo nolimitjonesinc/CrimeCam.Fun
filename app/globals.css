@@ -2,9 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: dark; }
-html, body { height: 100%; }
-body { @apply bg-crime-bg text-neutral-200; }
+:root {
+  color-scheme: dark;
+  --text-primary: theme('colors.neutral.100');
+  --text-secondary: theme('colors.neutral.300');
+  --text-tertiary: theme('colors.neutral.400');
+}
+
+html, body {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-crime-bg text-neutral-100;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  letter-spacing: -0.011em;
+}
 
 /* Crime tape header stripes */
 .crime-tape {
@@ -27,13 +42,45 @@ body { @apply bg-crime-bg text-neutral-200; }
 }
 
 /* Dropzone */
-.dropzone { @apply border-2 border-dashed border-crime-border rounded-2xl p-6 transition-colors; }
-.dropzone.hover { @apply border-crime-red bg-crime-surface/40; }
+.dropzone {
+  @apply border-2 border-dashed border-crime-border rounded-2xl p-6;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dropzone.hover {
+  @apply border-crime-red bg-crime-surface/40;
+  box-shadow: 0 0 24px rgba(239, 68, 68, 0.15), 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: scale(1.01);
+}
 
 /* Buttons */
-.btn { @apply inline-flex items-center justify-center rounded-xl px-4 py-3 font-medium shadow-crime transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crime-red/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:opacity-60 disabled:pointer-events-none; }
-.btn-primary { @apply bg-crime-red text-white hover:bg-red-500 active:bg-red-600; }
-.btn-ghost { @apply bg-crime-surface text-neutral-200 border border-crime-border hover:bg-white/5 active:bg-white/10; }
+.btn {
+  @apply inline-flex items-center justify-center rounded-xl px-4 py-3 font-semibold shadow-crime transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crime-red/60 focus-visible:ring-offset-2 focus-visible:ring-offset-black disabled:opacity-60 disabled:pointer-events-none;
+  letter-spacing: -0.01em;
+}
+.btn-primary {
+  @apply bg-gradient-to-b from-crime-red to-red-600 text-white hover:from-red-500 hover:to-red-600 active:from-red-600 active:to-red-700;
+  box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.35), 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+}
+.btn-primary:hover {
+  box-shadow: 0 6px 20px 0 rgba(239, 68, 68, 0.45), 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px 0 rgba(239, 68, 68, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+}
+.btn-ghost {
+  @apply bg-crime-surface text-neutral-100 border border-crime-border hover:bg-white/5 hover:border-neutral-600 active:bg-white/10;
+  transition: all 0.2s ease;
+}
 
 /* Cards */
-.card { @apply rounded-2xl border border-crime-border bg-crime-surface shadow-crime; }
+.card {
+  @apply rounded-2xl border border-crime-border bg-crime-surface shadow-crime;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  transition: all 0.3s ease;
+}
+.card:hover {
+  border-color: theme('colors.neutral.700');
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}

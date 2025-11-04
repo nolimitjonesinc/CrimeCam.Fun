@@ -151,10 +151,10 @@ export default function Page() {
     <ColdOpenSplash skipIfSeen={true}>
       {/* Upload / Preview */}
       {!previewURL && (
-        <section className="mt-6">
-          <div className="mb-6 text-center">
-            <h2 className="mt-2 text-3xl sm:text-4xl font-semibold tracking-tight">Upload Evidence</h2>
-            <p className="mt-3 text-neutral-300 text-base">Present your evidence — we promise to overreact.</p>
+        <section className="mt-8">
+          <div className="mb-8 text-center">
+            <h2 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-neutral-50">Upload Evidence</h2>
+            <p className="mt-3 text-neutral-300 text-base leading-relaxed">Present your evidence — we promise to overreact.</p>
           </div>
           <div
             className={`dropzone ${dragHover ? 'hover' : ''}`}
@@ -162,13 +162,13 @@ export default function Page() {
             onDragLeave={() => setDragHover(false)}
             onDrop={(e) => { e.preventDefault(); setDragHover(false); const f = e.dataTransfer.files?.[0]; if (f) onPick(f); }}
           >
-            <div className="flex flex-col items-center gap-3 text-center">
+            <div className="flex flex-col items-center gap-4 text-center">
               <div className="w-full max-w-sm">
-                <label className="block text-left text-sm text-neutral-300 mb-1">Mode</label>
+                <label className="block text-left text-sm font-medium text-neutral-300 mb-2">Mode</label>
                 <select
                   value={presetId}
                   onChange={(e)=>setPresetId(e.target.value as PresetId)}
-                  className="w-full rounded-xl bg-crime-surface border border-crime-border px-3 py-2 text-neutral-200"
+                  className="w-full rounded-xl bg-crime-surface border border-crime-border px-4 py-2.5 text-neutral-100 font-medium transition-all hover:border-neutral-600 focus:border-crime-red focus:outline-none focus:ring-2 focus:ring-crime-red/20"
                 >
                   {PRESETS.map(p => (
                     <option key={p.id} value={p.id}>{p.label}</option>
@@ -176,7 +176,7 @@ export default function Page() {
                 </select>
               </div>
               {/* Removed file type/size hint per request */}
-              <div className="flex gap-3 mt-1">
+              <div className="flex gap-3 mt-2">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
                 <label className="btn btn-primary cursor-pointer">
                   <input type="file" accept="image/*,.heic,.heif,image/heic,image/heif,image/heic-sequence,image/heif-sequence" capture="environment" className="hidden"
@@ -197,9 +197,9 @@ export default function Page() {
       )}
 
       {previewURL && !report && (
-        <section className="mt-6 space-y-4 pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}>
-          <div className="relative">
-            <img src={previewURL} alt="Preview" className="w-full max-h-[50vh] sm:max-h-none object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in" onClick={() => setLightboxOpen(true)} />
+        <section className="mt-8 space-y-6 pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}>
+          <div className="relative group">
+            <img src={previewURL} alt="Preview" className="w-full max-h-[50vh] sm:max-h-none object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in transition-all group-hover:border-neutral-600 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]" onClick={() => setLightboxOpen(true)} />
           </div>
 
           {error && progress === 'error' && (
@@ -208,7 +208,7 @@ export default function Page() {
             </motion.div>
           )}
 
-          <div className="sticky bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border">
+          <div className="sticky bottom-0 p-5 backdrop-blur-xl bg-black/50 border-t border-crime-border/50">
             <div className="max-w-3xl mx-auto flex gap-3">
               <button disabled={loading} className="btn btn-ghost flex-1" onClick={reset}>Back</button>
               <button disabled={loading} className="btn btn-primary flex-[2]" onClick={analyze}>
@@ -220,24 +220,26 @@ export default function Page() {
       )}
 
       {report && (
-        <section className="mt-6 pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}>
-          <div className="grid md:grid-cols-2 gap-4 items-start">
-            <div className="space-y-2 md:sticky md:top-20 self-start">
+        <section className="mt-8 pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}>
+          <div className="grid md:grid-cols-2 gap-6 items-start">
+            <div className="space-y-3 md:sticky md:top-20 self-start">
               {previewURL && (
-                <img
-                  src={previewURL}
-                  alt="Analyzed photo"
-                  className="w-full max-h-[45vh] sm:max-h-none object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in"
-                  onClick={() => setLightboxOpen(true)}
-                />
+                <div className="group relative">
+                  <img
+                    src={previewURL}
+                    alt="Analyzed photo"
+                    className="w-full max-h-[45vh] sm:max-h-none object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in transition-all group-hover:border-neutral-600 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
+                    onClick={() => setLightboxOpen(true)}
+                  />
+                </div>
               )}
             </div>
-            <div className="card p-5">
-              <div className="text-sm text-neutral-400">CASE #{report.caseId}</div>
-              <h2 className="mt-1 font-semibold text-xl tracking-tight">
+            <div className="card p-6">
+              <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">CASE #{report.caseId}</div>
+              <h2 className="mt-2 font-bold text-2xl tracking-tight text-neutral-50">
                 {presetId === 'group_roast' ? 'Group Analysis' : 'Crime Scene Report'}
               </h2>
-              <div className="mt-3 leading-7 text-[15px]">
+              <div className="mt-5">
                 {presetId === 'group_roast' ? (
                   <GroupRoastCarousel text={report.report} />
                 ) : (
@@ -247,7 +249,7 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="sticky bottom-0 p-4 backdrop-blur bg-black/40 border-t border-crime-border" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+          <div className="sticky bottom-0 p-5 backdrop-blur-xl bg-black/50 border-t border-crime-border/50" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
             <div className="max-w-3xl mx-auto grid grid-cols-2 gap-3">
               <button className="btn btn-ghost" onClick={reset}>New Analysis</button>
               <button className="btn btn-primary" disabled={exporting} onClick={doShare}>{exporting ? 'Preparing…' : 'Share'}</button>
