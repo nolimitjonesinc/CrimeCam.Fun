@@ -10,6 +10,7 @@ import { exportCompositeImage } from '@/lib/export';
 import { PRESETS, getPresetById, type PresetId } from '@/lib/presets';
 import { ReportSections } from '@/components/ReportSections';
 import { GroupRoastCarousel } from '@/components/GroupRoastCarousel';
+import { NiceOrNaughtyReport } from '@/components/NiceOrNaughtyReport';
 import { normalizeReport } from '@/lib/normalize';
 import { useHistory } from '@/components/history/useHistory';
 
@@ -242,6 +243,8 @@ export default function Page() {
               <div className="mt-5">
                 {presetId === 'group_roast' ? (
                   <GroupRoastCarousel text={report.report} />
+                ) : presetId === 'elf' ? (
+                  <NiceOrNaughtyReport text={report.report} />
                 ) : (
                   <ReportSections text={report.report} />
                 )}
