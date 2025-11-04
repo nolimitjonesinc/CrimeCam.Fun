@@ -199,40 +199,42 @@ export default function Page() {
       )}
 
       {previewURL && !report && (
-        <section className="mt-8 space-y-6 pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}>
-          <div className="relative group">
+        <section className="mt-8 pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}>
+          <div className="relative group mb-6">
             <img src={previewURL} alt="Preview" className="w-full max-h-[50vh] sm:max-h-none object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in transition-all group-hover:border-neutral-600 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]" onClick={() => setLightboxOpen(true)} />
           </div>
 
-          {/* Context Input */}
-          <div className="max-w-xl mx-auto">
-            <label className="block text-sm font-medium text-neutral-300 mb-2">
-              {getPresetById(presetId).contextPrompt}
-              <span className="text-neutral-500 ml-2">(Optional)</span>
-            </label>
-            <textarea
-              value={context}
-              onChange={(e) => setContext(e.target.value)}
-              placeholder={`e.g. "This is my roommate who never does dishes" or "They claim to be a morning person"`}
-              maxLength={150}
-              rows={2}
-              className="w-full rounded-xl bg-crime-surface border border-crime-border px-4 py-3 text-neutral-100 placeholder:text-neutral-500 resize-none transition-all hover:border-neutral-600 focus:border-crime-red focus:outline-none focus:ring-2 focus:ring-crime-red/20"
-            />
-            <div className="text-xs text-neutral-500 mt-1 text-right">{context.length}/150</div>
-          </div>
-
           {error && progress === 'error' && (
-            <motion.div initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mt-3 text-sm text-red-400 p-3 rounded-lg border border-red-500/20 bg-red-500/10">
+            <motion.div initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mb-4 text-sm text-red-400 p-3 rounded-lg border border-red-500/20 bg-red-500/10">
               <strong>Investigation Failed:</strong> {error}
             </motion.div>
           )}
 
           <div className="sticky bottom-0 p-5 backdrop-blur-xl bg-black/50 border-t border-crime-border/50">
-            <div className="max-w-3xl mx-auto flex gap-3">
-              <button disabled={loading} className="btn btn-ghost flex-1" onClick={reset}>Back</button>
-              <button disabled={loading} className="btn btn-primary flex-[2]" onClick={analyze}>
-                {loading ? (progress === 'upload' ? 'Uploading…' : 'Analyzing…') : 'Analyze Scene'}
-              </button>
+            <div className="max-w-3xl mx-auto space-y-3">
+              {/* Context Input */}
+              <div>
+                <label className="block text-xs font-medium text-neutral-400 mb-2">
+                  {getPresetById(presetId).contextPrompt}
+                  <span className="text-neutral-500 ml-1.5">(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={context}
+                  onChange={(e) => setContext(e.target.value)}
+                  placeholder={`e.g. "Microwaves fish at work" or "Claims to be a morning person"`}
+                  maxLength={150}
+                  className="w-full rounded-lg bg-crime-surface border border-crime-border px-3 py-2 text-sm text-neutral-100 placeholder:text-neutral-500 transition-all hover:border-neutral-600 focus:border-crime-red focus:outline-none focus:ring-1 focus:ring-crime-red/20"
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-3">
+                <button disabled={loading} className="btn btn-ghost flex-1" onClick={reset}>Back</button>
+                <button disabled={loading} className="btn btn-primary flex-[2]" onClick={analyze}>
+                  {loading ? (progress === 'upload' ? 'Uploading…' : 'Analyzing…') : 'Analyze Scene'}
+                </button>
+              </div>
             </div>
           </div>
         </section>
