@@ -24,25 +24,27 @@ function parseReport(text: string): ParsedReport {
   const verdictMeterMatch = text.match(/Verdict Meter:\s*(.+?)(?=\n)/is);
   const verdictRationaleMatch = text.match(/Verdict Meter:.*?\n(.+?)(?=\n\n|Image Clues:|$)/is);
 
-  // Extract bulleted lists
-  const imageCluesMatch = text.match(/Image Clues Santa Noted:\s*((?:[-•]\s*.+?\n?)+)/is);
-  const rapSheetMatch = text.match(/Alleged 12-Month Rap Sheet.*?:\s*((?:[-•]\s*.+?\n?)+)/is);
-  const niceDeedsMatch = text.match(/Nice Deeds on Record:\s*((?:[-•]\s*.+?\n?)+)/is);
-  const mitigatingMatch = text.match(/Mitigating Factors:\s*((?:[-•]\s*.+?\n?)+)/is);
+  // Extract bulleted lists - more flexible regex
+  const imageCluesMatch = text.match(/Image Clues Santa Noted:\s*([\s\S]*?)(?=\n\n|Alleged 12-Month|$)/i);
+  const rapSheetMatch = text.match(/Alleged 12-Month Rap Sheet.*?:\s*([\s\S]*?)(?=\n\n|Nice Deeds|$)/i);
+  const niceDeedsMatch = text.match(/Nice Deeds on Record:\s*([\s\S]*?)(?=\n\n|Mitigating Factors|$)/i);
+  const mitigatingMatch = text.match(/Mitigating Factors:\s*([\s\S]*?)(?=\n\n|Santa's Sentence|$)/i);
 
   // Extract sentence parts
-  const giftMatch = text.match(/Gift:\s*(.+?)(?=\n|Community Service:|$)/is);
-  const communityMatch = text.match(/Community Service:\s*(.+?)(?=\n|Parole Condition:|$)/is);
-  const paroleMatch = text.match(/Parole Condition:\s*(.+?)(?=\n|Right of Appeal:|$)/is);
+  const giftMatch = text.match(/Gift:\s*(.+?)(?=Community Service:|$)/is);
+  const communityMatch = text.match(/Community Service:\s*(.+?)(?=Parole Condition:|$)/is);
+  const paroleMatch = text.match(/Parole Condition:\s*(.+?)(?=Right of Appeal:|$)/is);
   const appealMatch = text.match(/Right of Appeal:\s*(.+?)$/is);
 
-  // Helper to extract bullet items
+  // Helper to extract bullet items - handles both - and • and numbers
   const extractBullets = (match: RegExpMatchArray | null): string[] => {
     if (!match) return [];
-    return match[1]
+    const text = match[1];
+    // Split by line breaks and extract content after bullets/numbers
+    return text
       .split('\n')
-      .map(line => line.replace(/^[-•]\s*/, '').trim())
-      .filter(line => line.length > 0);
+      .map(line => line.replace(/^[-•\d.)\s]+/, '').trim())
+      .filter(line => line.length > 5); // Ignore very short lines
   };
 
   const parsed: ParsedReport = {
