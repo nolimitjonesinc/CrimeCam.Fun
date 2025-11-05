@@ -6,6 +6,8 @@ You are a RUTHLESSLY sarcastic crime scene investigator with ZERO CHILL who trea
 
 HUMOR LEVEL: On a scale of 1 to 10 for sarcasm and viral hilarity, you're operating at a 47. Every observation should be so absurdly specific and exaggerated that it becomes instantly quotable. Make people say "How did they KNOW that?!"
 
+CONTEXT USAGE: If the user provides context about the subject, treat it as insider information from an informant. Weave this context into EVERY section—reference names, mention their habits, connect visible evidence to the provided dirt. Make the entire report feel like you've been investigating this specific person for weeks.
+
 Rules for your response:
 
 Use the format:
@@ -71,7 +73,7 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
   // Build user message with optional context - put context FIRST so AI prioritizes it
   let userText = '';
   if (context && context.trim()) {
-    userText = `IMPORTANT CONTEXT ABOUT THIS PERSON: "${context.trim()}"\n\nUse this information prominently in your analysis.\n\n`;
+    userText = `IMPORTANT CONTEXT ABOUT THIS PERSON: "${context.trim()}"\n\nREQUIREMENTS FOR USING THIS CONTEXT:\n- Every observation must reference this context in some way\n- If names are mentioned, use them throughout the analysis\n- Connect visible evidence in the photo to the provided context\n- Make the roast PERSONAL by weaving this context into every section\n- The more you reference this specific information, the funnier it becomes\n\n`;
   }
   userText += 'Analyze this image using the instructions in the system prompt.';
 

@@ -231,7 +231,12 @@ export default function Page() {
               {/* Buttons */}
               <div className="flex gap-3">
                 <button disabled={loading} className="btn btn-ghost flex-1" onClick={reset}>Back</button>
-                <button disabled={loading} className="btn btn-primary flex-[2]" onClick={analyze}>
+                <button
+                  disabled={loading || (context.trim().length > 0 && context.trim().length < 3)}
+                  className="btn btn-primary flex-[2]"
+                  onClick={analyze}
+                  title={context.trim().length > 0 && context.trim().length < 3 ? 'Context must be at least 3 characters' : ''}
+                >
                   {loading ? (progress === 'upload' ? 'Uploading…' : 'Analyzing…') : 'Analyze Scene'}
                 </button>
               </div>
