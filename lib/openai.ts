@@ -68,11 +68,12 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
     throw new Error('Missing OPENAI_API_KEY');
   }
 
-  // Build user message with optional context
-  let userText = 'Analyze this image using the instructions in the system prompt.';
+  // Build user message with optional context - put context FIRST so AI prioritizes it
+  let userText = '';
   if (context && context.trim()) {
-    userText += `\n\nAdditional context provided by user: "${context.trim()}"`;
+    userText = `IMPORTANT CONTEXT ABOUT THIS PERSON: "${context.trim()}"\n\nUse this information prominently in your analysis.\n\n`;
   }
+  userText += 'Analyze this image using the instructions in the system prompt.';
 
   const body = {
     model: 'gpt-5-mini', // Swap to 'gpt-5' for highest humor quality
