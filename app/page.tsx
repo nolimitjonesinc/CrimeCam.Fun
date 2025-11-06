@@ -8,6 +8,7 @@ import { compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEI
 import Lightbox from '@/components/Lightbox';
 import { exportCompositeImage } from '@/lib/export';
 import { PRESETS, getPresetById, type PresetId } from '@/lib/presets';
+import ModeSelect from '@/components/ModeSelect';
 import { ReportSections } from '@/components/ReportSections';
 import { GroupRoastCarousel } from '@/components/GroupRoastCarousel';
 import { NiceOrNaughtyReport } from '@/components/NiceOrNaughtyReport';
@@ -167,15 +168,7 @@ export default function Page() {
             <div className="flex flex-col items-center gap-4 text-center">
               <div className="w-full max-w-sm">
                 <label className="block text-left text-sm font-medium text-neutral-300 mb-2">Mode</label>
-                <select
-                  value={presetId}
-                  onChange={(e)=>setPresetId(e.target.value as PresetId)}
-                  className="w-full rounded-xl bg-crime-surface border border-crime-border px-4 py-2.5 text-neutral-100 font-medium transition-all hover:border-neutral-600 focus:border-crime-red focus:outline-none focus:ring-2 focus:ring-crime-red/20"
-                >
-                  {PRESETS.map(p => (
-                    <option key={p.id} value={p.id}>{p.label}</option>
-                  ))}
-                </select>
+                <ModeSelect value={presetId} onChange={(id)=>setPresetId(id)} />
               </div>
               {/* Removed file type/size hint per request */}
               <div className="flex gap-3 mt-2">
