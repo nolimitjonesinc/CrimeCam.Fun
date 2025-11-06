@@ -9,6 +9,8 @@ import Lightbox from '@/components/Lightbox';
 import { exportCompositeImage } from '@/lib/export';
 import { PRESETS, getPresetById, type PresetId } from '@/lib/presets';
 import ModeSelect from '@/components/ModeSelect';
+import QualitySelect from '@/components/QualitySelect';
+import type { ModelQuality } from '@/lib/providers';
 import { ReportSections } from '@/components/ReportSections';
 import { GroupRoastCarousel } from '@/components/GroupRoastCarousel';
 import { NiceOrNaughtyReport } from '@/components/NiceOrNaughtyReport';
@@ -23,6 +25,17 @@ type Report = {
   caseId: string;
   report: string;
   shortText: string;
+  telemetry?: {
+    provider: string;
+    model: string;
+    quality: string;
+    durationMs: number;
+    promptTokens?: number;
+    completionTokens?: number;
+    estimatedCost?: number;
+    fallbackUsed?: boolean;
+    fallbackReason?: string;
+  };
 };
 
 export default function Page() {
@@ -40,6 +53,11 @@ export default function Page() {
     const v = stored ? parseInt(stored, 10) : 7;
     return Number.isFinite(v) ? Math.min(10, Math.max(1, v)) : 7;
   });
+  const [quality, setQuality] = useState<ModelQuality>(() => {
+    if (typeof window === 'undefined') return 'auto';
+    return (localStorage.getItem('crimecam_quality') as ModelQuality) || 'auto';
+  });
+  const [availableQualities, setAvailableQualities] = useState<ModelQuality[]>(['auto']);
   // const [filter, setFilter] = useState<FilterKind>('none');
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<'idle' | 'upload' | 'analyzing' | 'done' | 'error'>('idle');
@@ -55,6 +73,19 @@ export default function Page() {
   useEffect(() => () => { if (previewURL) URL.revokeObjectURL(previewURL); }, [previewURL]);
   useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('crimecam_preset', presetId); }, [presetId]);
   useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('crimecam_spice', String(spice)); }, [spice]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('crimecam_quality', quality); }, [quality]);
+
+  // Fetch available providers on mount
+  useEffect(() => {
+    fetch('/api/providers')
+      .then(res => res.json())
+      .then(data => {
+        if (data.availableQualities) {
+          setAvailableQualities(data.availableQualities);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   // Filters removed; no style transforms
 
@@ -103,7 +134,7 @@ export default function Page() {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64, mode: presetId, context: context || undefined, spice })
+        body: JSON.stringify({ imageBase64: base64, mode: presetId, context: context || undefined, spice, quality })
       });
       console.log('🔍 [CLIENT] Response received, status:', res.status);
       if (!res.ok) {
@@ -117,7 +148,12 @@ export default function Page() {
       let report: string = data.report ?? 'Case file corrupted. Investigation inconclusive.';
       try { report = normalizeReport(report); } catch {}
       const shortText = `CASE #${caseId}\n\n${report.substring(0, 260)}...`;
-      const rep: Report = { caseId, report, shortText };
+      const rep: Report = {
+        caseId,
+        report,
+        shortText,
+        telemetry: data.telemetry
+      };
       setReport(rep);
       setProgress('done');
       if (previewURL) addItem({ id: caseId, createdAt: Date.now(), thumbnail: previewURL, text: report });
@@ -184,6 +220,10 @@ export default function Page() {
                   <span>Soft</span><span>Medium</span><span>Feral</span>
                 </div>
               </div>
+              <div className="w-full max-w-sm">
+                <label className="block text-left text-sm font-medium text-neutral-300 mb-2">Quality</label>
+                <QualitySelect value={quality} onChange={(q)=>setQuality(q)} availableQualities={availableQualities} />
+              </div>
               {/* Removed file type/size hint per request */}
               <div className="flex gap-3 mt-2">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
@@ -240,6 +280,10 @@ export default function Page() {
                     <span>Soft</span><span>Medium</span><span>Feral</span>
                   </div>
                 </div>
+                <div className="mt-3">
+                  <label className="block text-xs font-medium text-neutral-400 mb-2">Quality</label>
+                  <QualitySelect value={quality} onChange={(q)=>setQuality(q)} availableQualities={availableQualities} />
+                </div>
               </div>
 
               {/* Buttons */}
@@ -276,6 +320,20 @@ export default function Page() {
             </div>
             <div className="card p-6">
               <div className="text-xs font-semibold text-neutral-400 uppercase tracking-wider">CASE #{report.caseId}</div>
+              {report.telemetry && (
+                <div className="mt-1 text-xs text-neutral-500">
+                  <span className="inline-flex items-center gap-1">
+                    {report.telemetry.provider === 'anthropic' ? 'Claude' : 'GPT'}
+                    {report.telemetry.fallbackUsed && (
+                      <span className="text-yellow-500" title={report.telemetry.fallbackReason}> (fallback)</span>
+                    )}
+                    • {(report.telemetry.durationMs / 1000).toFixed(1)}s
+                    {report.telemetry.estimatedCost && (
+                      <span> • ${report.telemetry.estimatedCost.toFixed(4)}</span>
+                    )}
+                  </span>
+                </div>
+              )}
               <h2 className="mt-2 font-bold text-2xl tracking-tight text-neutral-50">
                 {presetId === 'group_roast' ? 'Group Analysis' : 'Crime Scene Report'}
               </h2>
