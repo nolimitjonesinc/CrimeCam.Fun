@@ -269,8 +269,8 @@ export default function ModeSelect({ value, onChange }: Props) {
           role="listbox"
           tabIndex={-1}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 max-h-80 md:max-h-[22rem]">
-            <div className="overflow-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <div className="overflow-auto max-h-80 md:max-h-[22rem]">
               {PRESETS.map((p, idx) => {
                 const active = idx === activeIndex;
                 return (

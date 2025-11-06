@@ -74,7 +74,7 @@ export default function ColdOpenSplash({
         className="absolute inset-0 flex flex-col"
       >
         <HeaderBar collapsed={done} />
-        <main className="mx-auto w-full max-w-3xl px-4 py-8">{children ?? <PlaceholderUpload />}</main>
+        <main className="mx-auto w-full max-w-7xl px-4 py-8">{children ?? <PlaceholderUpload />}</main>
       </motion.div>
     </div>
   );
