@@ -147,8 +147,8 @@ const anthropic = ANTHROPIC_API_KEY ? new Anthropic({
 // Helper to convert spice level to temperature
 function spiceToTemperature(spice?: number): number {
   const s = Math.min(10, Math.max(1, Number(spice) || 7));
-  // Map 1..10 → 0.3..1.2
-  return 0.3 + (s - 1) * ((1.2 - 0.3) / 9);
+  // Map 1..10 → 0.3..1.0 (Anthropic max is 1.0, OpenAI can go higher)
+  return 0.3 + (s - 1) * ((1.0 - 0.3) / 9);
 }
 
 // Build system prompt based on mode
