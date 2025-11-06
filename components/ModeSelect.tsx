@@ -120,6 +120,130 @@ export default function ModeSelect({ value, onChange }: Props) {
 
   const selected = useMemo(() => PRESETS.find(p => p.id === value)!, [value]);
 
+  function ModeGlyph({ id, className }: { id: PresetId; className?: string }) {
+    const common = "stroke-current";
+    switch (id) {
+      case "crime":
+        // Badge
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M12 3l3 2 3-1 1 3 2 2-2 3 1 3-3 1-2 3-3-2-3 2-2-3-3-1 1-3-2-3 2-2 1-3 3 1 3-2z" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "mugshot":
+        // Bars
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M4 4h16M4 8h16M4 12h16M4 16h16M4 20h16" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "prescription":
+        // Rx
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M6 6h5a3 3 0 010 6H6V6zm0 6l8 8m-2-8l4 4" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "movie_poster":
+        // Clapper
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <rect x="3" y="9" width="18" height="12" rx="2" className={common} strokeWidth="1.5" />
+            <path d="M3 9l4-5 6 5 4-5 4 5" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "dating_profile":
+        // Chat bubble
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M4 6h16v9a3 3 0 01-3 3H9l-5 3 2-3H7a3 3 0 01-3-3V6z" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "warning_label":
+        // Triangle
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M12 3l9 16H3l9-16z" className={common} strokeWidth="1.5" />
+            <path d="M12 9v5m0 3h.01" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "amazon_listing":
+        // Tag
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M3 12l9-9 9 9-9 9-9-9z" className={common} strokeWidth="1.5" />
+            <circle cx="12" cy="8" r="1.5" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "trading_card":
+        // Star
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M12 3l2.7 5.7 6.3.9-4.5 4.4 1 6.2L12 17l-5.5 3.2 1-6.2-4.5-4.4 6.3-.9L12 3z" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "elf":
+        // Bell
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M12 4c-3 0-5 2-5 5v3l-2 3h14l-2-3V9c0-3-2-5-5-5z" className={common} strokeWidth="1.5" />
+            <circle cx="12" cy="19" r="1.5" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "spooky":
+        // Simple ghost
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M7 18V9a5 5 0 0110 0v9l-2-1-2 1-2-1-2 1-2-1z" className={common} strokeWidth="1.5" />
+            <circle cx="10" cy="12" r="1" fill="currentColor" />
+            <circle cx="14" cy="12" r="1" fill="currentColor" />
+          </svg>
+        );
+      case "beach_patrol":
+        // Lifebuoy
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <circle cx="12" cy="12" r="7" className={common} strokeWidth="1.5" />
+            <circle cx="12" cy="12" r="3" className={common} strokeWidth="1.5" />
+            <path d="M12 5v4M12 15v4M5 12h4M15 12h4" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "group_roast":
+      default:
+        // Circles group
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <circle cx="8" cy="12" r="3" className={common} strokeWidth="1.5" />
+            <circle cx="16" cy="12" r="3" className={common} strokeWidth="1.5" />
+            <circle cx="12" cy="7" r="2.5" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+    }
+  }
+
+  function HeroPreview({ id, title }: { id: PresetId; title: string }) {
+    const style = swatchStyle(id);
+    return (
+      <div className="hidden md:flex flex-col gap-3 p-3">
+        <div className="relative h-36 w-full rounded-xl overflow-hidden ring-1 ring-black/25">
+          <div className={`absolute inset-0 ${style ? "" : "bg-gradient-to-r"} ${!style ? gradientClass[id] : ""}`} style={style} />
+          <div className="absolute inset-0 p-3 flex flex-col">
+            <div className="flex-1" />
+            <div className="text-sm font-semibold text-white/90 drop-shadow">{title}</div>
+            <div className="mt-1 h-1.5 rounded bg-white/70 w-1/2" />
+            <div className="mt-1 h-1 rounded bg-white/50 w-2/3" />
+          </div>
+          <div className="absolute top-3 right-3 text-white/90">
+            <ModeGlyph id={id} className="h-10 w-10" />
+          </div>
+        </div>
+        <div className="text-xs text-neutral-300 leading-relaxed">
+          Preview shows styling motif. No emojis—vector SVG icons only.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div ref={rootRef} className="relative w-full" onKeyDown={onKeyDown}>
       <button
@@ -141,38 +265,43 @@ export default function ModeSelect({ value, onChange }: Props) {
       {open && (
         <div
           ref={listRef}
-          className="absolute z-20 mt-2 w-full max-h-72 overflow-auto rounded-xl border border-crime-border bg-black/80 backdrop-blur-xl shadow-crime"
+          className="absolute z-20 mt-2 w-full md:w-[42rem] rounded-xl border border-crime-border bg-black/80 backdrop-blur-xl shadow-crime overflow-hidden"
           role="listbox"
           tabIndex={-1}
         >
-          {PRESETS.map((p, idx) => {
-            const active = idx === activeIndex;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                data-idx={idx}
-                role="option"
-                aria-selected={p.id === value}
-                onMouseEnter={() => setActiveIndex(idx)}
-                onClick={() => commitSelection(idx)}
-                className={`w-full text-left px-3.5 py-2.5 flex items-center gap-3 transition-colors ${
-                  active ? "bg-white/10 ring-1 ring-white/10" : "hover:bg-white/5"
-                }`}
-              >
-                <Thumb id={p.id} />
-                <div className="flex-1">
-                  <div className="text-neutral-100 font-medium leading-none">{p.label}</div>
-                  <div className="text-xs text-neutral-400 leading-tight">{p.exportTitle}</div>
-                </div>
-                {p.id === value && (
-                  <svg className="h-5 w-5 text-neutral-300" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                    <path fillRule="evenodd" d="M16.704 5.29a1 1 0 00-1.408-1.42l-6.59 6.538-2.002-2.016a1 1 0 10-1.424 1.404l2.704 2.72a1 1 0 001.416.008l7.304-7.234z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </button>
-            );
-          })}
+          <div className="grid grid-cols-1 md:grid-cols-2 max-h-80 md:max-h-[22rem]">
+            <div className="overflow-auto">
+              {PRESETS.map((p, idx) => {
+                const active = idx === activeIndex;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    data-idx={idx}
+                    role="option"
+                    aria-selected={p.id === value}
+                    onMouseEnter={() => setActiveIndex(idx)}
+                    onClick={() => commitSelection(idx)}
+                    className={`w-full text-left px-3.5 py-2.5 flex items-center gap-3 transition-colors ${
+                      active ? "bg-white/10 ring-1 ring-white/10" : "hover:bg-white/5"
+                    }`}
+                  >
+                    <Thumb id={p.id} />
+                    <div className="flex-1">
+                      <div className="text-neutral-100 font-medium leading-none">{p.label}</div>
+                      <div className="text-xs text-neutral-400 leading-tight">{p.exportTitle}</div>
+                    </div>
+                    {p.id === value && (
+                      <svg className="h-5 w-5 text-neutral-300" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                        <path fillRule="evenodd" d="M16.704 5.29a1 1 0 00-1.408-1.42l-6.59 6.538-2.002-2.016a1 1 0 10-1.424 1.404l2.704 2.72a1 1 0 001.416.008l7.304-7.234z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+            <HeroPreview id={PRESETS[activeIndex]?.id ?? selected.id} title={PRESETS[activeIndex]?.label ?? selected.label} />
+          </div>
         </div>
       )}
     </div>
