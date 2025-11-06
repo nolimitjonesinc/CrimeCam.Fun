@@ -85,8 +85,11 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
   }
   userText += 'Analyze this image using the system instructions.';
 
-  const body = {
-    model: 'gpt-5-mini', // Swap to 'gpt-5' for highest humor quality
+  const model = 'gpt-5-mini'; // Swap to 'gpt-5' for highest humor quality
+  const supportsTemp = model !== 'gpt-5-mini';
+
+  const body: any = {
+    model,
     messages: [
       { role: 'system', content: buildSystemPrompt(mode) },
       {
@@ -104,15 +107,15 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
         ]
       }
     ],
-    temperature: spiceToTemp(spice),
     max_completion_tokens: 3000
-  } as const;
+  };
+  if (supportsTemp) body.temperature = spiceToTemp(spice);
 
   console.log('🔍 [OPENAI] Request body:', {
     model: body.model,
     messageCount: body.messages.length,
     systemPromptLength: body.messages[0].content.length,
-    temperature: body.temperature,
+    temperature: body.temperature ?? 'default',
     max_completion_tokens: body.max_completion_tokens
   });
 
