@@ -34,8 +34,29 @@ const swatchStyle = (id: PresetId): React.CSSProperties | undefined => {
         "repeating-linear-gradient(45deg, #ffffff 0, #ffffff 10px, #ef4444 10px, #ef4444 20px)",
     };
   }
+  if (id === "warning_label") {
+    // Caution stripes
+    return {
+      backgroundImage:
+        "repeating-linear-gradient(45deg, #eab308 0, #eab308 12px, #111827 12px, #111827 24px)",
+    };
+  }
   return undefined;
 };
+
+function Thumb({ id }: { id: PresetId }) {
+  const style = swatchStyle(id);
+  return (
+    <div className="relative h-9 w-14 rounded-md overflow-hidden ring-1 ring-black/25 flex-shrink-0">
+      <div className={`absolute inset-0 ${style ? "" : "bg-gradient-to-r"} ${!style ? gradientClass[id] : ""}`} style={style} />
+      {/* Faux content lines for a more realistic preview */}
+      <div className="absolute inset-0 p-1.5 flex flex-col justify-end gap-1">
+        <div className="h-1.5 rounded bg-white/70" />
+        <div className="h-1 rounded bg-white/50 w-3/4" />
+      </div>
+    </div>
+  );
+}
 
 export default function ModeSelect({ value, onChange }: Props) {
   const [open, setOpen] = useState(false);
@@ -109,11 +130,8 @@ export default function ModeSelect({ value, onChange }: Props) {
         aria-expanded={open}
       >
         <div className="flex items-center gap-3">
-          <div
-            className={`h-6 w-6 rounded-md bg-gradient-to-r ${gradientClass[selected.id]} ring-1 ring-black/20`}
-            style={swatchStyle(selected.id)}
-          />
-          <span>{selected.label}</span>
+          <Thumb id={selected.id} />
+          <span className="truncate">{selected.label}</span>
         </div>
         <svg className={`h-5 w-5 transition-transform ${open ? "rotate-180" : "rotate-0"}`} viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.29a.75.75 0 01-.02-1.08z" clipRule="evenodd" />
@@ -139,13 +157,10 @@ export default function ModeSelect({ value, onChange }: Props) {
                 onMouseEnter={() => setActiveIndex(idx)}
                 onClick={() => commitSelection(idx)}
                 className={`w-full text-left px-3.5 py-2.5 flex items-center gap-3 transition-colors ${
-                  active ? "bg-white/10" : "hover:bg-white/5"
+                  active ? "bg-white/10 ring-1 ring-white/10" : "hover:bg-white/5"
                 }`}
               >
-                <div
-                  className={`h-7 w-7 rounded-md bg-gradient-to-r ${gradientClass[p.id]} ring-1 ring-black/20 flex-shrink-0`}
-                  style={swatchStyle(p.id)}
-                />
+                <Thumb id={p.id} />
                 <div className="flex-1">
                   <div className="text-neutral-100 font-medium leading-none">{p.label}</div>
                   <div className="text-xs text-neutral-400 leading-tight">{p.exportTitle}</div>
@@ -163,4 +178,3 @@ export default function ModeSelect({ value, onChange }: Props) {
     </div>
   );
 }
-
