@@ -102,7 +102,7 @@ export const MODEL_CONFIGS: Record<ModelQuality, ModelConfig> = {
   },
   balanced: {
     provider: 'anthropic',
-    model: 'claude-3-5-haiku-20241022',
+    model: 'claude-3-haiku-20240307',
     quality: 'balanced',
     displayName: 'Balanced',
     description: 'Good quality & speed (Claude Haiku)',
@@ -113,10 +113,10 @@ export const MODEL_CONFIGS: Record<ModelQuality, ModelConfig> = {
   },
   premium: {
     provider: 'anthropic',
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'claude-3-5-sonnet-20240620',
     quality: 'premium',
     displayName: 'Premium',
-    description: 'Best quality (Claude Sonnet)',
+    description: 'Best quality (Claude Sonnet 3.5)',
     relativeSpeed: 5,
     relativeCost: 8,
     supportsTemperature: true,
