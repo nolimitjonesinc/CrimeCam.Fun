@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
     }
 
-    const { imageBase64, mode, context } = await req.json();
-    console.log('🔍 [ANALYZE] Mode:', mode, '| Image length:', imageBase64?.length || 0, '| Context:', context ? 'provided' : 'none');
+    const { imageBase64, mode, context, spice } = await req.json();
+    console.log('🔍 [ANALYZE] Mode:', mode, '| Spice:', spice, '| Image length:', imageBase64?.length || 0, '| Context:', context ? 'provided' : 'none');
 
     if (!imageBase64) {
       console.log('🔍 [ANALYZE] ERROR: Missing image');
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     }
 
     console.log('🔍 [ANALYZE] Calling OpenAI...');
-    const result = await analyzeImageWithPersona(imageBase64, mode, context);
+    const result = await analyzeImageWithPersona(imageBase64, mode, context, spice);
     console.log('🔍 [ANALYZE] OpenAI success! Report length:', result.report?.length || 0);
 
     return NextResponse.json(result);

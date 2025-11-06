@@ -34,6 +34,12 @@ export default function Page() {
     if (typeof window === 'undefined') return 'crime';
     return (localStorage.getItem('crimecam_preset') as PresetId) || 'crime';
   });
+  const [spice, setSpice] = useState<number>(() => {
+    if (typeof window === 'undefined') return 7;
+    const stored = localStorage.getItem('crimecam_spice');
+    const v = stored ? parseInt(stored, 10) : 7;
+    return Number.isFinite(v) ? Math.min(10, Math.max(1, v)) : 7;
+  });
   // const [filter, setFilter] = useState<FilterKind>('none');
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<'idle' | 'upload' | 'analyzing' | 'done' | 'error'>('idle');
@@ -48,6 +54,7 @@ export default function Page() {
 
   useEffect(() => () => { if (previewURL) URL.revokeObjectURL(previewURL); }, [previewURL]);
   useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('crimecam_preset', presetId); }, [presetId]);
+  useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('crimecam_spice', String(spice)); }, [spice]);
 
   // Filters removed; no style transforms
 
@@ -96,7 +103,7 @@ export default function Page() {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ imageBase64: base64, mode: presetId, context: context || undefined })
+        body: JSON.stringify({ imageBase64: base64, mode: presetId, context: context || undefined, spice })
       });
       console.log('🔍 [CLIENT] Response received, status:', res.status);
       if (!res.ok) {
@@ -170,6 +177,13 @@ export default function Page() {
                 <label className="block text-left text-sm font-medium text-neutral-300 mb-2">Mode</label>
                 <ModeSelect value={presetId} onChange={(id)=>setPresetId(id)} />
               </div>
+              <div className="w-full max-w-sm">
+                <label className="block text-left text-sm font-medium text-neutral-300 mb-1">Spice Level <span className="text-neutral-400">({spice})</span></label>
+                <input type="range" min={1} max={10} value={spice} onChange={(e)=>setSpice(parseInt(e.target.value))} className="w-full" />
+                <div className="flex justify-between text-[11px] text-neutral-500 mt-1">
+                  <span>Soft</span><span>Medium</span><span>Feral</span>
+                </div>
+              </div>
               {/* Removed file type/size hint per request */}
               <div className="flex gap-3 mt-2">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
@@ -219,6 +233,13 @@ export default function Page() {
                   maxLength={150}
                   className="w-full rounded-lg bg-crime-surface border border-crime-border px-3 py-2 text-sm text-neutral-100 placeholder:text-neutral-500 transition-all hover:border-neutral-600 focus:border-crime-red focus:outline-none focus:ring-1 focus:ring-crime-red/20"
                 />
+                <div className="mt-3">
+                  <label className="block text-xs font-medium text-neutral-400 mb-1">Spice Level <span className="text-neutral-500">({spice})</span></label>
+                  <input type="range" min={1} max={10} value={spice} onChange={(e)=>setSpice(parseInt(e.target.value))} className="w-full" />
+                  <div className="flex justify-between text-[11px] text-neutral-500 mt-1">
+                    <span>Soft</span><span>Medium</span><span>Feral</span>
+                  </div>
+                </div>
               </div>
 
               {/* Buttons */}

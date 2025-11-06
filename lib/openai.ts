@@ -61,21 +61,29 @@ function buildSystemPrompt(mode?: PresetId | string) {
   return preset.systemPrompt;
 }
 
-export async function analyzeImageWithPersona(imageBase64: string, mode?: PresetId | string, context?: string) {
+function spiceToTemp(spice?: number) {
+  const s = Math.min(10, Math.max(1, Number(spice) || 7));
+  // Map 1..10 → 0.4..1.15
+  return 0.4 + (s - 1) * ((1.15 - 0.4) / 9);
+}
+
+export async function analyzeImageWithPersona(imageBase64: string, mode?: PresetId | string, context?: string, spice?: number) {
   const startTime = Date.now();
-  console.log('🔍 [OPENAI] Starting analysis, mode:', mode, '| context:', context ? 'provided' : 'none');
+  console.log('🔍 [OPENAI] Starting analysis, mode:', mode, '| spice:', spice, '| context:', context ? 'provided' : 'none');
 
   if (!OPENAI_API_KEY) {
     console.error('🔍 [OPENAI] ERROR: Missing OPENAI_API_KEY');
     throw new Error('Missing OPENAI_API_KEY');
   }
 
-  // Build user message with optional context - put context FIRST so AI prioritizes it
+  // Build user message with optional context + humor dial
   let userText = '';
+  const s = Math.min(10, Math.max(1, Number(spice) || 7));
+  userText += `HUMOR DIAL: ${s}/10.\nGuidance: 1-3 gentle and playful, 4-6 spicy but friendly, 7-8 savage yet safe, 9-10 feral but still playful. Never cross into cruelty, slurs, or hate.\n\n`;
   if (context && context.trim()) {
-    userText = `IMPORTANT CONTEXT ABOUT THIS PERSON: "${context.trim()}"\n\nREQUIREMENTS FOR USING THIS CONTEXT:\n- Every observation must reference this context in some way\n- If names are mentioned, use them throughout the analysis\n- Connect visible evidence in the photo to the provided context\n- Make the roast PERSONAL by weaving this context into every section\n- The more you reference this specific information, the funnier it becomes\n\n`;
+    userText += `Context (use as clues, not a script): "${context.trim()}"\n- Weave context where it heightens the joke.\n- Blend with image details and plausible life habits.\n- Do NOT make every line about the photo or the context.\n\n`;
   }
-  userText += 'Analyze this image using the instructions in the system prompt.';
+  userText += 'Analyze this image using the system instructions.';
 
   const body = {
     model: 'gpt-5-mini', // Swap to 'gpt-5' for highest humor quality
@@ -96,7 +104,7 @@ export async function analyzeImageWithPersona(imageBase64: string, mode?: Preset
         ]
       }
     ],
-    temperature: 1,
+    temperature: spiceToTemp(spice),
     max_completion_tokens: 3000
   } as const;
 

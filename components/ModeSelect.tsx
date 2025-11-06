@@ -288,9 +288,12 @@ export default function ModeSelect({ value, onChange }: Props) {
                   >
                     <Thumb id={p.id} />
                     <div className="flex-1">
-                      <div className="text-neutral-100 font-medium leading-none">{p.label}</div>
-                      <div className="text-xs text-neutral-400 leading-tight">{p.exportTitle}</div>
-                    </div>
+                  <div className="text-neutral-100 font-medium leading-none flex items-center gap-2">
+                    <ModeGlyph id={p.id} className="h-4 w-4 opacity-80" />
+                    <span>{p.label}</span>
+                  </div>
+                  <div className="text-xs text-neutral-400 leading-tight">{(p as any).shortDesc ?? p.exportTitle}</div>
+                </div>
                     {p.id === value && (
                       <svg className="h-5 w-5 text-neutral-300" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
                         <path fillRule="evenodd" d="M16.704 5.29a1 1 0 00-1.408-1.42l-6.59 6.538-2.002-2.016a1 1 0 10-1.424 1.404l2.704 2.72a1 1 0 001.416.008l7.304-7.234z" clipRule="evenodd" />
