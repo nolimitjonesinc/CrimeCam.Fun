@@ -199,7 +199,7 @@ export default function Page() {
       {!previewURL && (
         <section className="mt-8 max-w-3xl mx-auto">
           <div className="mb-8 text-center">
-            <h2 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-neutral-50">Upload Evidence</h2>
+            <h2 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-neutral-50">Upload Photo Evidence</h2>
             <p className="mt-3 text-neutral-300 text-base leading-relaxed">Present your evidence — we promise to overreact.</p>
           </div>
           <div
