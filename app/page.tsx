@@ -220,10 +220,12 @@ export default function Page() {
                   <span>Soft</span><span>Medium</span><span>Feral</span>
                 </div>
               </div>
-              <div className="w-full max-w-sm">
+              {/* Quality selector hidden - defaults to 'auto' (Claude 3.5 Haiku).
+                  Uncomment below for premium membership option in future */}
+              {/* <div className="w-full max-w-sm">
                 <label className="block text-left text-sm font-medium text-neutral-300 mb-2">Quality</label>
                 <QualitySelect value={quality} onChange={(q)=>setQuality(q)} availableQualities={availableQualities} />
-              </div>
+              </div> */}
               {/* Removed file type/size hint per request */}
               <div className="flex gap-3 mt-2">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
@@ -280,10 +282,12 @@ export default function Page() {
                     <span>Soft</span><span>Medium</span><span>Feral</span>
                   </div>
                 </div>
-                <div className="mt-3">
+                {/* Quality selector hidden - defaults to 'auto' (Claude 3.5 Haiku).
+                    Uncomment below for premium membership option in future */}
+                {/* <div className="mt-3">
                   <label className="block text-xs font-medium text-neutral-400 mb-2">Quality</label>
                   <QualitySelect value={quality} onChange={(q)=>setQuality(q)} availableQualities={availableQualities} />
-                </div>
+                </div> */}
               </div>
 
               {/* Buttons */}
