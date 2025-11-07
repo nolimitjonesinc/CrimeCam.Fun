@@ -44,81 +44,7 @@ const swatchStyle = (id: PresetId): React.CSSProperties | undefined => {
   return undefined;
 };
 
-function Thumb({ id }: { id: PresetId }) {
-  const style = swatchStyle(id);
-  return (
-    <div className="relative h-9 w-14 rounded-md overflow-hidden ring-1 ring-black/25 flex-shrink-0 flex items-center justify-center">
-      <div className={`absolute inset-0 ${style ? "" : "bg-gradient-to-r"} ${!style ? gradientClass[id] : ""}`} style={style} />
-      <div className="relative z-10 text-white/90">
-        <ModeGlyph id={id} className="h-5 w-5" />
-      </div>
-    </div>
-  );
-}
-
-export default function ModeSelect({ value, onChange }: Props) {
-  const [open, setOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(() => PRESETS.findIndex(p => p.id === value));
-  const rootRef = useRef<HTMLDivElement | null>(null);
-  const listRef = useRef<HTMLDivElement | null>(null);
-
-  // Keep activeIndex synced to value when selection changes externally
-  useEffect(() => {
-    const idx = PRESETS.findIndex(p => p.id === value);
-    setActiveIndex(idx >= 0 ? idx : 0);
-  }, [value]);
-
-  // Close on outside click
-  useEffect(() => {
-    function onDoc(e: MouseEvent) {
-      if (!rootRef.current) return;
-      if (!rootRef.current.contains(e.target as Node)) setOpen(false);
-    }
-    if (open) document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
-  }, [open]);
-
-  function commitSelection(idx: number) {
-    const chosen = PRESETS[idx];
-    if (!chosen) return;
-    onChange(chosen.id as PresetId);
-    setOpen(false);
-  }
-
-  function onKeyDown(e: React.KeyboardEvent) {
-    if (!open && (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ")) {
-      e.preventDefault();
-      setOpen(true);
-      return;
-    }
-    if (!open) return;
-    if (e.key === "Escape") {
-      e.preventDefault();
-      setOpen(false);
-      return;
-    }
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setActiveIndex(i => (i + 1) % PRESETS.length);
-      scrollActiveIntoView();
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setActiveIndex(i => (i - 1 + PRESETS.length) % PRESETS.length);
-      scrollActiveIntoView();
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      commitSelection(activeIndex);
-    }
-  }
-
-  function scrollActiveIntoView() {
-    const el = listRef.current?.querySelector<HTMLButtonElement>(`[data-idx='${activeIndex}']`);
-    el?.scrollIntoView({ block: "nearest" });
-  }
-
-  const selected = useMemo(() => PRESETS.find(p => p.id === value)!, [value]);
-
-  function ModeGlyph({ id, className }: { id: PresetId; className?: string }) {
+function ModeGlyph({ id, className }: { id: PresetId; className?: string }) {
     const common = "stroke-current";
     switch (id) {
       case "crime":
@@ -233,7 +159,81 @@ export default function ModeSelect({ value, onChange }: Props) {
           </svg>
         );
     }
+}
+
+function Thumb({ id }: { id: PresetId }) {
+  const style = swatchStyle(id);
+  return (
+    <div className="relative h-9 w-14 rounded-md overflow-hidden ring-1 ring-black/25 flex-shrink-0 flex items-center justify-center">
+      <div className={`absolute inset-0 ${style ? "" : "bg-gradient-to-r"} ${!style ? gradientClass[id] : ""}`} style={style} />
+      <div className="relative z-10 text-white/90">
+        <ModeGlyph id={id} className="h-5 w-5" />
+      </div>
+    </div>
+  );
+}
+
+export default function ModeSelect({ value, onChange }: Props) {
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(() => PRESETS.findIndex(p => p.id === value));
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
+
+  // Keep activeIndex synced to value when selection changes externally
+  useEffect(() => {
+    const idx = PRESETS.findIndex(p => p.id === value);
+    setActiveIndex(idx >= 0 ? idx : 0);
+  }, [value]);
+
+  // Close on outside click
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (!rootRef.current) return;
+      if (!rootRef.current.contains(e.target as Node)) setOpen(false);
+    }
+    if (open) document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+
+  function commitSelection(idx: number) {
+    const chosen = PRESETS[idx];
+    if (!chosen) return;
+    onChange(chosen.id as PresetId);
+    setOpen(false);
   }
+
+  function onKeyDown(e: React.KeyboardEvent) {
+    if (!open && (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      setOpen(true);
+      return;
+    }
+    if (!open) return;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      setOpen(false);
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex(i => (i + 1) % PRESETS.length);
+      scrollActiveIntoView();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex(i => (i - 1 + PRESETS.length) % PRESETS.length);
+      scrollActiveIntoView();
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      commitSelection(activeIndex);
+    }
+  }
+
+  function scrollActiveIntoView() {
+    const el = listRef.current?.querySelector<HTMLButtonElement>(`[data-idx='${activeIndex}']`);
+    el?.scrollIntoView({ block: "nearest" });
+  }
+
+  const selected = useMemo(() => PRESETS.find(p => p.id === value)!, [value]);
 
   function HeroPreview({ id, title }: { id: PresetId; title: string }) {
     const style = swatchStyle(id);
