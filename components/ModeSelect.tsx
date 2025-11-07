@@ -242,11 +242,8 @@ export default function ModeSelect({ value, onChange }: Props) {
       <div className="hidden md:flex flex-col gap-3 p-3">
         <div className="relative h-36 w-full rounded-xl overflow-hidden ring-1 ring-black/25">
           <div className={`absolute inset-0 ${style ? "" : "bg-gradient-to-r"} ${!style ? gradientClass[id] : ""}`} style={style} />
-          <div className="absolute inset-0 p-3 flex flex-col">
-            <div className="flex-1" />
-            <div className="text-sm font-semibold text-white/90 drop-shadow">{title}</div>
-            <div className="mt-1 h-1.5 rounded bg-white/70 w-1/2" />
-            <div className="mt-1 h-1 rounded bg-white/50 w-2/3" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-2xl font-bold text-white/95 drop-shadow-lg text-center px-4">{title}</div>
           </div>
           <div className="absolute top-3 right-3 text-white/90">
             <ModeGlyph id={id} className="h-10 w-10" />
