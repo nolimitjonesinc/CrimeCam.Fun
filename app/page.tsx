@@ -306,13 +306,13 @@ export default function Page() {
       {report && (
         <section className="mt-8 pb-24" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 6rem)' }}>
           <div className="grid md:grid-cols-[1.1fr,1fr] gap-8 items-start">
-            <div className="space-y-3">
+            <div className="space-y-3 md:sticky md:top-6 self-start">
               {previewURL && (
                 <div className="group relative">
                   <img
                     src={previewURL}
                     alt="Analyzed photo"
-                    className="w-full max-h-[85vh] object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in transition-all group-hover:border-neutral-600 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
+                    className="w-full max-h-[88vh] object-contain rounded-2xl border border-crime-border shadow-crime cursor-zoom-in transition-all group-hover:border-neutral-600 group-hover:shadow-[0_12px_32px_rgba(0,0,0,0.55)]"
                     onClick={() => setLightboxOpen(true)}
                   />
                 </div>
