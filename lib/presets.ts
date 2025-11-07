@@ -303,7 +303,7 @@ Analyze the photo as if listing a questionable product for sale.`,
     label: 'Nice or Naughty List',
     exportTitle: 'Nice or Naughty List',
     contextPrompt: 'Any juicy clues or inside jokes?',
-    shortDesc: "Santa's reviewing your file. It's bad."
+    shortDesc: "Santa's reviewing your file. It's bad.",
     systemPrompt: `You are Santa's burned‑out parole officer. You're brutally honest, oddly charming, and uncomfortably observant. This is paperwork that roasts.
 
 CONTEXT + IMAGE: Treat both as clues — not shackles. Blend photo details, user context, and painfully plausible life habits. Do NOT make every line about the photo. Aim for 60–80% broader personality roasts that feel true beyond the image.
