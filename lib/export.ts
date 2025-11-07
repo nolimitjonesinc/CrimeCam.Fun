@@ -135,7 +135,7 @@ export async function exportCompositeImage(opts: {
   const sectionGap = 12;
   const textHeight = sectionBlocks.reduce((h, b) => h + sectionTitleLH + b.lines.length * bodyLH + sectionGap, 0);
   const subtitleH = parsed.subtitle ? bodyLH : 0;
-  const headerH = 140;
+  const headerH = 180;
   const H = headerH + (subtitleH ? gap / 2 + subtitleH : 0) + gap + imgH + gap + textHeight + pad;
 
   canvas.width = W;
@@ -158,36 +158,38 @@ export async function exportCompositeImage(opts: {
 
   // Logo
   if (logo) {
-    const logoSize = 84;
-    ctx.drawImage(logo, pad, Math.round((headerH - logoSize) / 2), logoSize, logoSize);
+    const logoSize = 70;
+    ctx.drawImage(logo, pad, 32, logoSize, logoSize);
   }
 
-  // Header text: Brand and Case
+  // Header text: Brand (top section)
+  const brandX = pad + 86;
   ctx.fillStyle = '#111827';
-  ctx.font = `800 ${titleSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
-  ctx.fillText('CRIMECAM.FUN', pad + 100, 56);
-  ctx.font = `600 20px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
+  ctx.font = `800 32px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
+  ctx.fillText('CRIMECAM.FUN', brandX, 54);
+  ctx.font = `600 18px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
   ctx.fillStyle = '#b91c1c';
-  ctx.fillText('THE CRIME-ISH UNIT', pad + 100, 84);
-  ctx.fillStyle = '#111827';
-  ctx.font = `600 22px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
+  ctx.fillText('THE CRIME-ISH UNIT', brandX, 80);
+
+  // Case number (top right)
+  ctx.fillStyle = '#6b7280';
+  ctx.font = `600 18px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
   const caseText = `CASE #${caseId}`;
   const caseW = ctx.measureText(caseText).width;
-  ctx.fillText(caseText, W - pad - caseW, 56);
+  ctx.fillText(caseText, W - pad - caseW, 54);
 
-  // Subtle stamp
-  ctx.save();
-  ctx.translate(W - 280, 38);
-  ctx.rotate(-0.25);
-  ctx.fillStyle = 'rgba(220, 38, 38, 0.15)';
-  ctx.font = `900 28px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
-  ctx.fillText('OFFICIAL REPORT', 0, 0);
-  ctx.restore();
+  // Horizontal divider line
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(pad, 120);
+  ctx.lineTo(W - pad, 120);
+  ctx.stroke();
 
-  // Title
-  ctx.fillStyle = '#e5e5e5';
-  ctx.font = `600 ${titleSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
-  ctx.fillText(title, pad, pad + titleLH);
+  // Document title (bottom section of header)
+  ctx.fillStyle = '#111827';
+  ctx.font = `700 38px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans`;
+  ctx.fillText(title, pad, 158);
 
   // Optional subtitle extracted from AI's heading
   let y = headerH;
