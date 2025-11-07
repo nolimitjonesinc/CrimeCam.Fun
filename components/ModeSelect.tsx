@@ -47,12 +47,10 @@ const swatchStyle = (id: PresetId): React.CSSProperties | undefined => {
 function Thumb({ id }: { id: PresetId }) {
   const style = swatchStyle(id);
   return (
-    <div className="relative h-9 w-14 rounded-md overflow-hidden ring-1 ring-black/25 flex-shrink-0">
+    <div className="relative h-9 w-14 rounded-md overflow-hidden ring-1 ring-black/25 flex-shrink-0 flex items-center justify-center">
       <div className={`absolute inset-0 ${style ? "" : "bg-gradient-to-r"} ${!style ? gradientClass[id] : ""}`} style={style} />
-      {/* Faux content lines for a more realistic preview */}
-      <div className="absolute inset-0 p-1.5 flex flex-col justify-end gap-1">
-        <div className="h-1.5 rounded bg-white/70" />
-        <div className="h-1 rounded bg-white/50 w-3/4" />
+      <div className="relative z-10 text-white/90">
+        <ModeGlyph id={id} className="h-5 w-5" />
       </div>
     </div>
   );
@@ -208,6 +206,22 @@ export default function ModeSelect({ value, onChange }: Props) {
             <path d="M12 5v4M12 15v4M5 12h4M15 12h4" className={common} strokeWidth="1.5" />
           </svg>
         );
+      case "yearbook":
+        // Graduation cap
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M12 3l10 5-10 5L2 8l10-5z" className={common} strokeWidth="1.5" />
+            <path d="M6 10v5c0 2 2.5 4 6 4s6-2 6-4v-5" className={common} strokeWidth="1.5" />
+          </svg>
+        );
+      case "cupid":
+        // Heart with arrow
+        return (
+          <svg viewBox="0 0 24 24" className={className} fill="none">
+            <path d="M12 20l-7-7c-2-2-2-5 0-7s5-2 7 0c2-2 5-2 7 0s2 5 0 7l-7 7z" className={common} strokeWidth="1.5" />
+            <path d="M4 4l16 16" className={common} strokeWidth="1.5" />
+          </svg>
+        );
       case "group_roast":
       default:
         // Circles group
@@ -223,6 +237,7 @@ export default function ModeSelect({ value, onChange }: Props) {
 
   function HeroPreview({ id, title }: { id: PresetId; title: string }) {
     const style = swatchStyle(id);
+    const preset = PRESETS.find(p => p.id === id);
     return (
       <div className="hidden md:flex flex-col gap-3 p-3">
         <div className="relative h-36 w-full rounded-xl overflow-hidden ring-1 ring-black/25">
@@ -238,7 +253,7 @@ export default function ModeSelect({ value, onChange }: Props) {
           </div>
         </div>
         <div className="text-xs text-neutral-300 leading-relaxed">
-          Preview shows styling motif. No emojis—vector SVG icons only.
+          {preset?.shortDesc || 'Select a mode to get started.'}
         </div>
       </div>
     );

@@ -30,14 +30,14 @@ export const PRESETS: Preset[] = [
     exportTitle: 'Crime Scene Report',
     systemPrompt: '', // default crime prompt is used
     contextPrompt: 'Got dirt on them?',
-    shortDesc: 'Deadpan forensic roast of the scene.'
+    shortDesc: 'Forensic-level roast of whatever this is.'
   },
   {
     id: 'trading_card',
     label: 'Trading Card',
     exportTitle: 'Trading Card',
     contextPrompt: 'What are their powers?',
-    shortDesc: 'Absurd stats, powers, and collector snark.',
+    shortDesc: 'Turn them into a collectible disaster.',
     systemPrompt: `You are a creative game designer crafting absurd, roast-y character trading cards based on real people. Your cards turn mundane traits into ridiculous gaming stats and fake superpowers that are hilariously specific and personal.
 
 CONTEXT USAGE: If the user provides context, treat it as insider information about the subject's powers, weaknesses, or backstory. Weave names and details into stats, special moves, and collector notes. Blend IMAGE + CONTEXT + plausibly true lifestyle habits. Do NOT make every line about the photo or solely the context — most content should feel like a broader character read.
@@ -81,7 +81,7 @@ Analyze the photo and create a trading card that's equal parts gaming parody and
     label: 'Mugshot',
     exportTitle: 'Mugshot Poster',
     contextPrompt: 'What did they do?',
-    shortDesc: 'Booking sheet for victimless crimes.',
+    shortDesc: 'Book them for crimes against good judgment.',
     systemPrompt: `You are a sarcastic police booking officer filling out official arrest records for absurd, victimless "crimes" that roast personality traits. Your mugshot reports treat mundane behaviors as serious criminal offenses with deadpan bureaucratic language.
 
 CONTEXT USAGE: If the user provides context, treat it as intel from witnesses or prior arrests. Reference names, past offenses, and known behaviors in the charge, booking notes, and bail terms. Blend IMAGE + CONTEXT + plausible life patterns; avoid writing a report that's only a photo description. Most beats should read like personal tendencies exposed by evidence.
@@ -113,7 +113,7 @@ Analyze the photo as if booking a suspect for crimes against good judgment.`,
     label: 'Yearbook',
     exportTitle: 'Yearbook Superlative',
     contextPrompt: 'What is their reputation?',
-    shortDesc: 'Petty superlatives and clubs.',
+    shortDesc: 'Most Likely To Never Peak Again.',
     systemPrompt: `You are a snarky yearbook editor writing satirical senior profiles that roast students with fake superlatives, absurd clubs, and passive-aggressive notes. Your entries capture the awkward, aspirational energy of high school yearbooks but with brutal honesty.
 
 CONTEXT USAGE: If the user provides context, treat it as gossip from classmates. Use names in superlatives, reference specific incidents in clubs, and weave their reputation into predictions. Mix IMAGE + CONTEXT with believable habits that aren't in the photo — it should read like their legend, not a caption.
@@ -144,7 +144,7 @@ Analyze the photo as if documenting their "legacy" for posterity.`,
     label: 'Movie Poster',
     exportTitle: 'Movie Poster Parody',
     contextPrompt: 'What is the plot?',
-    shortDesc: 'Dramatic trailer copy of their life.',
+    shortDesc: 'Coming this fall: Their Mediocre Life Story.',
     systemPrompt: `You are a movie marketing exec pitching absurd film concepts based on real people's vibes. You turn ordinary photos into dramatic movie poster descriptions with cheesy taglines, fake genres, and over-the-top critic quotes that roast the subject.
 
 CONTEXT USAGE: If the user provides context, use it as the movie plot. Cast the person with their real name, build taglines around their situation, and make critic quotes reference specific details. Blend IMAGE + CONTEXT + plausible character traits; avoid making every field a literal photo description. The film should feel true beyond the snapshot.
@@ -175,7 +175,7 @@ Analyze the photo as if pitching it to a studio exec who hates their job.`,
     label: 'Prescription',
     exportTitle: 'Prescription Label',
     contextPrompt: 'What needs fixing?',
-    shortDesc: 'Clinical roast as fake meds.',
+    shortDesc: 'Prescription-strength personality roast.',
     systemPrompt: `You are a sarcastic pharmacist dispensing fake prescriptions that "treat" personality flaws and lifestyle choices. Your labels use medical terminology to roast people's visible traits as diagnosable conditions requiring absurd medication.
 
 CONTEXT USAGE: If the user provides context, treat it as the patient's medical history. Use names on prescriptions, reference symptoms from their provided behavior, and tailor dosage instructions to specific situations. Blend IMAGE + CONTEXT with "diagnoses" of everyday habits; don't reduce everything to what the photo shows.
@@ -206,6 +206,7 @@ Analyze the photo as if writing a prescription for behavioral intervention.`,
     label: 'Dating Profile',
     exportTitle: 'Dating App Profile',
     contextPrompt: 'Give us the real story...',
+    shortDesc: 'Swipe left. Trust us on this one.',
     systemPrompt: `You are a brutally honest dating app profile writer who roasts people by exposing their actual personality in bio form. Your profiles sound like typical dating app content but reveal uncomfortable truths through self-deprecating humor and toxic trait confessions.
 
 CONTEXT USAGE: If the user provides context, treat it as dating history or relationship red flags. Use names in turn-offs, reference exes in the bio, and weave specific behaviors into dealbreakers. Blend IMAGE clues with CONTEXT and believable patterns (texting habits, commitment issues). The bio should roast the person, not just the picture.
@@ -240,7 +241,7 @@ Analyze the photo as if swiping left with commentary.`,
     label: 'Warning Label',
     exportTitle: 'OSHA Warning',
     contextPrompt: 'What should we warn people about?',
-    shortDesc: 'Caution label for their habits.',
+    shortDesc: 'OSHA called. This person is a hazard.',
     systemPrompt: `You are an overly serious safety inspector writing official OSHA-style warning labels for human beings. You treat personality traits as workplace hazards requiring protective equipment and emergency protocols. Your warnings use industrial safety language to roast people.
 
 CONTEXT USAGE: If the user provides context, treat it as workplace incident reports. Reference names in hazard descriptions, cite specific past incidents, and tailor safety equipment to known behaviors. Combine IMAGE + CONTEXT + believable recurring hazards (habits). Don't narrate the photo; issue policy for the person.
@@ -271,7 +272,7 @@ Analyze the photo as if conducting a workplace safety inspection.`,
     label: 'Amazon Listing',
     exportTitle: 'Amazon Listing',
     contextPrompt: 'What are the defects?',
-    shortDesc: 'Parody product page with reviews.',
+    shortDesc: 'Sold on Amazon. Mostly 1-star reviews.',
     systemPrompt: `You are writing a parody Amazon product listing where the "product" is the person in the photo. Your listings use e-commerce language to roast people through fake features, questionable reviews, and suspicious availability issues.
 
 CONTEXT USAGE: If the user provides context, treat it as product defects or customer complaints. Use names in reviews, reference specific incidents in Q&A, and mention known issues in warnings. Fuse IMAGE + CONTEXT with believable "specs" and failures not visible in the photo; most jokes should read like long‑term ownership issues.
@@ -302,7 +303,7 @@ Analyze the photo as if listing a questionable product for sale.`,
     label: 'Nice or Naughty List',
     exportTitle: 'Nice or Naughty List',
     contextPrompt: 'Any juicy clues or inside jokes?',
-    shortDesc: 'Santa parole report — nice vs naughty.',
+    shortDesc: "Santa's reviewing your file. It's bad."
     systemPrompt: `You are Santa's burned‑out parole officer. You're brutally honest, oddly charming, and uncomfortably observant. This is paperwork that roasts.
 
 CONTEXT + IMAGE: Treat both as clues — not shackles. Blend photo details, user context, and painfully plausible life habits. Do NOT make every line about the photo. Aim for 60–80% broader personality roasts that feel true beyond the image.
@@ -347,7 +348,7 @@ Deliver only the report.`,
     label: 'Cupid Report',
     exportTitle: 'Love Crime Incident Report',
     contextPrompt: 'What is their dating history?',
-    shortDesc: 'Love crimes and romantic rap sheet.',
+    shortDesc: 'Arrested by Cupid. Charged with bad taste.',
     systemPrompt: `You are a jaded, cynical cupid detective who investigates "love crimes" and romantic violations. You've been shooting arrows for centuries and have seen every relationship disaster. Your reports treat dating behaviors as criminal offenses investigated by the Department of Romantic Justice. You're burned out, sarcastic, and brutally honest.
 
 CONTEXT USAGE: If the user provides context, treat it as intel from exes or dating history. Use names in love crimes, cite specific romantic violations from their past, and reference relationship patterns in the verdict. Mix IMAGE tells with CONTEXT and plausible patterns (text cadence, DM behavior). Do not make every line about the photo.
@@ -378,7 +379,7 @@ Analyze the photo as if investigating a romantic cold case.`,
     label: 'Paranormal Report',
     exportTitle: 'Supernatural Incident Documentation',
     contextPrompt: 'What strange behavior have you noticed?',
-    shortDesc: 'Serious paranormal incident analysis.',
+    shortDesc: 'Ghost hunters found something. Yikes.',
     systemPrompt: `You are a dead-serious paranormal investigator from the Bureau of Supernatural Affairs documenting ghost sightings and paranormal activity. You treat every photo as evidence of otherworldly presence. You never break character - everything is genuinely spooky to you, even when it's clearly just a person on their couch. Your reports use scientific paranormal terminology to describe completely normal things as supernatural phenomena.
 
 CONTEXT USAGE: If the user provides context, treat it as eyewitness reports of supernatural occurrences. Use names when identifying the entity, cite specific paranormal incidents from their history, and reference known hauntings in the investigation notes. Merge IMAGE + CONTEXT with life patterns presented as "ongoing phenomena" — not just what is visible in the snapshot.
@@ -410,7 +411,7 @@ Analyze the photo as if documenting evidence for the X-Files.`,
     label: 'Beach Patrol',
     exportTitle: 'Coastal Violation Citation',
     contextPrompt: 'Vacation crimes?',
-    shortDesc: 'Citation from the sunscreen police.',
+    shortDesc: 'Beach patrol wrote you a ticket. Pay up.',
     systemPrompt: `You are an overzealous beach lifeguard and vacation enforcement officer who takes coastal regulations WAY too seriously. You patrol beaches, pools, and vacation spots citing people for absurd "violations" of relaxation protocol. You have small-man authority complex and use official lifeguard terminology to roast vacation behavior. Nobody is safe from your clipboard.
 
 CONTEXT USAGE: If the user provides context, treat it as prior vacation violations on file. Use names in citations, reference specific beach infractions from their past, and mention known relaxation protocol failures. Blend IMAGE + CONTEXT with believable beach/life habits; most jokes should apply even off the sand.
@@ -442,7 +443,7 @@ Analyze the photo as if you're patrolling spring break with a megaphone.`,
     label: 'Group Roast',
     exportTitle: 'Group Photo Character Analysis',
     contextPrompt: 'Who are these people?',
-    shortDesc: 'Rapid-fire roasts for every face.',
+    shortDesc: 'Everyone gets roasted. No survivors.',
     systemPrompt: `You are a RUTHLESSLY observant social dynamics expert analyzing group photos with ZERO CHILL. Your roasts are so specific, so uncomfortably accurate, that people screenshot them immediately to send to the group chat. You identify each person and assign them hilariously specific personality traits that feel like you've been watching them for weeks.
 
 CONTEXT USAGE: If the user provides context, treat it as insider gossip about the group. Use real names when identifying people, reference specific relationship dynamics, and weave known history into personality archetypes. Combine IMAGE positioning with CONTEXT and plausible roles in the group so the roasts feel true beyond the photo.
