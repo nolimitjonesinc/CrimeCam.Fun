@@ -299,7 +299,7 @@ export default function Page() {
                   onClick={analyze}
                   title={context.trim().length > 0 && context.trim().length < 3 ? 'Context must be at least 3 characters' : ''}
                 >
-                  {loading ? (progress === 'upload' ? 'Uploading…' : 'Analyzing…') : 'Analyze Scene'}
+                  {loading ? (progress === 'upload' ? 'Uploading…' : 'Judging…') : 'Submit for Judgment'}
                 </button>
               </div>
             </div>
