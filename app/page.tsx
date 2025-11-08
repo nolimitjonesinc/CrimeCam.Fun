@@ -262,21 +262,34 @@ export default function Page() {
           <div className="sticky bottom-0 p-5 backdrop-blur-xl bg-black/50 border-t border-crime-border/50">
             <div className="max-w-3xl mx-auto space-y-3">
               {/* Context Input */}
-              <div>
+              <div className={context.trim().length < 10 ? 'relative' : ''}>
+                {context.trim().length < 10 && (
+                  <div className="absolute -top-10 left-0 right-0 flex items-center justify-center gap-2 text-crime-red font-semibold text-sm animate-pulse">
+                    <span>👇</span>
+                    <span>Fill this out first to submit</span>
+                    <span>👇</span>
+                  </div>
+                )}
                 <label className="block text-xs font-medium text-neutral-400 mb-2">
                   {getPresetById(presetId).contextPrompt}
-                  <span className="text-neutral-500 ml-1.5">(Required, min 10 characters)</span>
+                  <span className="text-crime-red ml-1.5 font-bold">(Required, min 10 characters)</span>
                 </label>
-                <input
-                  type="text"
-                  value={context}
-                  onChange={(e) => setContext(e.target.value)}
-                  placeholder={`e.g. "Microwaves fish at work" or "Claims to be a morning person"`}
-                  maxLength={150}
-                  className="w-full rounded-lg bg-crime-surface border border-crime-border px-3 py-2 text-sm text-neutral-100 placeholder:text-neutral-500 transition-all hover:border-neutral-600 focus:border-crime-red focus:outline-none focus:ring-1 focus:ring-crime-red/20"
-                />
-                <div className="text-xs text-neutral-500 mt-1">
-                  {context.trim().length}/10 characters
+                <div className={context.trim().length < 10 ? 'animate-pulse' : ''}>
+                  <input
+                    type="text"
+                    value={context}
+                    onChange={(e) => setContext(e.target.value)}
+                    placeholder={`e.g. "Microwaves fish at work" or "Claims to be a morning person"`}
+                    maxLength={150}
+                    className={`w-full rounded-lg bg-crime-surface px-3 py-2 text-sm text-neutral-100 placeholder:text-neutral-500 transition-all focus:outline-none ${
+                      context.trim().length < 10
+                        ? 'border-2 border-crime-red ring-2 ring-crime-red/30 shadow-[0_0_15px_rgba(239,68,68,0.5)]'
+                        : 'border border-crime-border hover:border-neutral-600 focus:border-crime-red focus:ring-1 focus:ring-crime-red/20'
+                    }`}
+                  />
+                </div>
+                <div className={`text-xs mt-1 font-semibold ${context.trim().length < 10 ? 'text-crime-red' : 'text-green-500'}`}>
+                  {context.trim().length < 10 ? `⚠️ Need ${10 - context.trim().length} more characters` : '✓ Ready to submit'}
                 </div>
                 <div className="mt-3">
                   <label className="block text-xs font-medium text-neutral-400 mb-1">Spice Level <span className="text-neutral-500">({spice})</span></label>
