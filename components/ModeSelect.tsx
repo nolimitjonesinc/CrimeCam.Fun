@@ -243,11 +243,11 @@ export default function ModeSelect({ value, onChange }: Props) {
         <div className="relative h-36 w-full rounded-xl overflow-hidden ring-1 ring-black/25">
           <div className={`absolute inset-0 ${style ? "" : "bg-gradient-to-r"} ${!style ? gradientClass[id] : ""}`} style={style} />
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4">
-            <div className="bg-red-600 px-4 py-2 rounded-lg">
-              <div className="text-2xl font-bold text-white/95 drop-shadow-lg text-center">{title}</div>
+            <div className="bg-green-700 px-4 py-2 rounded-lg shadow-lg">
+              <div className="text-2xl font-bold text-white drop-shadow-lg text-center">{title}</div>
             </div>
-            <div className="bg-red-600 px-3 py-1.5 rounded-lg">
-              <div className="text-sm text-white/80 drop-shadow text-center">
+            <div className="bg-green-700 px-3 py-1.5 rounded-lg shadow-lg">
+              <div className="text-sm text-white drop-shadow text-center">
                 {preset?.shortDesc || 'Select a mode to get started.'}
               </div>
             </div>
