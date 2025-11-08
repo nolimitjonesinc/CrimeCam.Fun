@@ -265,7 +265,7 @@ export default function Page() {
               <div>
                 <label className="block text-xs font-medium text-neutral-400 mb-2">
                   {getPresetById(presetId).contextPrompt}
-                  <span className="text-neutral-500 ml-1.5">(Optional)</span>
+                  <span className="text-neutral-500 ml-1.5">(Required, min 10 characters)</span>
                 </label>
                 <input
                   type="text"
@@ -275,6 +275,9 @@ export default function Page() {
                   maxLength={150}
                   className="w-full rounded-lg bg-crime-surface border border-crime-border px-3 py-2 text-sm text-neutral-100 placeholder:text-neutral-500 transition-all hover:border-neutral-600 focus:border-crime-red focus:outline-none focus:ring-1 focus:ring-crime-red/20"
                 />
+                <div className="text-xs text-neutral-500 mt-1">
+                  {context.trim().length}/10 characters
+                </div>
                 <div className="mt-3">
                   <label className="block text-xs font-medium text-neutral-400 mb-1">Spice Level <span className="text-neutral-500">({spice})</span></label>
                   <input type="range" min={1} max={10} value={spice} onChange={(e)=>setSpice(parseInt(e.target.value))} className="w-full" />
@@ -294,10 +297,10 @@ export default function Page() {
               <div className="flex gap-3">
                 <button disabled={loading} className="btn btn-ghost flex-1" onClick={reset}>Back</button>
                 <button
-                  disabled={loading || (context.trim().length > 0 && context.trim().length < 3)}
+                  disabled={loading || context.trim().length < 10}
                   className="btn btn-primary flex-[2]"
                   onClick={analyze}
-                  title={context.trim().length > 0 && context.trim().length < 3 ? 'Context must be at least 3 characters' : ''}
+                  title={context.trim().length < 10 ? `Context required (${context.trim().length}/10 characters)` : ''}
                 >
                   {loading ? (progress === 'upload' ? 'Uploading…' : 'Judging…') : 'Submit for Judgment'}
                 </button>
