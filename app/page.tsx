@@ -284,7 +284,12 @@ export default function Page() {
   }
 
   function reset() {
-    setImageFile(null); setPreviewURL(null); setReport(null); setError(null); setProgress('idle');
+    setImageFile(null); setPreviewURL(null); setReport(null); setError(null); setProgress('idle'); setShareUrl(null);
+  }
+
+  function tryAgain() {
+    // Keep image and context, just clear report to go back to preview/edit state
+    setReport(null); setError(null); setProgress('idle'); setShareUrl(null);
   }
 
   return (
@@ -464,8 +469,9 @@ export default function Page() {
           </div>
 
           <div className="sticky bottom-0 p-5 backdrop-blur-xl bg-black/50 border-t border-crime-border/50" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-            <div className="max-w-3xl mx-auto grid grid-cols-2 gap-3">
+            <div className="max-w-3xl mx-auto grid grid-cols-3 gap-3">
               <button className="btn btn-ghost" onClick={reset}>New Analysis</button>
+              <button className="btn btn-ghost" onClick={tryAgain}>Try Again</button>
               <button className="btn btn-primary" disabled={exporting} onClick={doShare}>{exporting ? 'Preparing…' : 'Share'}</button>
             </div>
           </div>
