@@ -237,3 +237,174 @@ export async function exportCompositeImage(opts: {
   if (!blob) throw new Error('Export failed');
   return blob;
 }
+
+/**
+ * Export report as multiple images for Instagram/text carousel
+ * Returns array of 3-4 images perfect for swiping through
+ */
+export async function exportCarouselImages(opts: {
+  src: string;
+  caseId: string;
+  report: string;
+  titleOverride?: string;
+}): Promise<Blob[]> {
+  const { src, caseId, report, titleOverride } = opts;
+
+  function loadImage(url: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const i = new Image();
+      i.onload = () => resolve(i);
+      i.onerror = () => reject(new Error('Failed to load image'));
+      i.src = url;
+    });
+  }
+
+  const img = await loadImage(src);
+  const parsed = parseReportSections(report);
+  const blobs: Blob[] = [];
+
+  const W = 1080;
+  const H = 1920; // Standard Instagram story/post size
+  const pad = 60;
+
+  // === IMAGE 1: Cover with photo + case number ===
+  const canvas1 = document.createElement('canvas');
+  canvas1.width = W;
+  canvas1.height = H;
+  const ctx1 = canvas1.getContext('2d');
+  if (!ctx1) throw new Error('Canvas unsupported');
+
+  // Background
+  ctx1.fillStyle = '#0a0a0a';
+  ctx1.fillRect(0, 0, W, H);
+
+  // Photo (centered, fill most of space)
+  const imgScale = Math.min((W - pad * 2) / img.width, (H * 0.6) / img.height);
+  const imgW = img.width * imgScale;
+  const imgH = img.height * imgScale;
+  const imgX = (W - imgW) / 2;
+  const imgY = 200;
+  ctx1.drawImage(img, imgX, imgY, imgW, imgH);
+
+  // Case number overlay on image
+  ctx1.fillStyle = 'rgba(0, 0, 0, 0.7)';
+  ctx1.fillRect(0, imgY, W, 120);
+  ctx1.fillStyle = '#ffffff';
+  ctx1.font = '900 64px ui-sans-serif, system-ui';
+  ctx1.textAlign = 'center';
+  ctx1.fillText(`CASE #${caseId}`, W / 2, imgY + 80);
+
+  // Swipe indicator
+  ctx1.fillStyle = '#ef4444';
+  ctx1.font = '700 40px ui-sans-serif, system-ui';
+  ctx1.fillText('SWIPE FOR REPORT →', W / 2, H - 150);
+
+  // CrimeCam branding
+  ctx1.fillStyle = '#ffffff';
+  ctx1.font = '600 32px ui-sans-serif, system-ui';
+  ctx1.fillText('CRIMECAM.FUN', W / 2, H - 80);
+
+  const blob1: Blob | null = await new Promise(r => canvas1.toBlob(b => r(b), 'image/jpeg', 0.9));
+  if (blob1) blobs.push(blob1);
+
+  // === IMAGES 2-3: Content sections ===
+  ctx1.textAlign = 'left'; // Reset
+  for (let i = 0; i < Math.min(parsed.sections.length, 2); i++) {
+    const section = parsed.sections[i];
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) continue;
+
+    // Background
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, W, H);
+
+    // Red accent bar
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(0, 0, W, 20);
+
+    // Section title
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '900 56px ui-sans-serif, system-ui';
+    ctx.fillText(section.title.toUpperCase(), pad, 140);
+
+    // Content
+    ctx.font = '600 38px ui-sans-serif, system-ui';
+    ctx.fillStyle = '#e5e5e5';
+    const lines = wrapText(ctx, section.content, W - pad * 2);
+    let y = 240;
+    const lineHeight = 58;
+
+    for (const line of lines.slice(0, 20)) { // Max 20 lines per image
+      ctx.fillText(line, pad, y);
+      y += lineHeight;
+      if (y > H - 200) break; // Leave room for footer
+    }
+
+    // Footer
+    ctx.fillStyle = '#666666';
+    ctx.font = '500 28px ui-sans-serif, system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText(`CASE #${caseId}`, W / 2, H - 80);
+
+    const blob: Blob | null = await new Promise(r => canvas.toBlob(b => r(b), 'image/jpeg', 0.9));
+    if (blob) blobs.push(blob);
+    ctx.textAlign = 'left';
+  }
+
+  // === FINAL IMAGE: Verdict + CTA ===
+  const verdictSection = parsed.sections.find(s => s.title.toLowerCase().includes('verdict'));
+  if (verdictSection) {
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas unsupported');
+
+    // Gradient background
+    const gradient = ctx.createLinearGradient(0, 0, 0, H);
+    gradient.addColorStop(0, '#991b1b');
+    gradient.addColorStop(1, '#450a0a');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, W, H);
+
+    // Verdict title
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '900 72px ui-sans-serif, system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText('VERDICT', W / 2, 200);
+
+    // Verdict content
+    ctx.font = '700 44px ui-sans-serif, system-ui';
+    const lines = wrapText(ctx, verdictSection.content, W - pad * 2);
+    let y = 320;
+    for (const line of lines.slice(0, 8)) {
+      ctx.fillText(line, W / 2, y);
+      y += 66;
+    }
+
+    // CTA box
+    const ctaY = H - 400;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(pad, ctaY, W - pad * 2, 280);
+
+    ctx.fillStyle = '#0a0a0a';
+    ctx.font = '900 48px ui-sans-serif, system-ui';
+    ctx.fillText('GET YOUR OWN REPORT', W / 2, ctaY + 100);
+
+    ctx.font = '600 36px ui-sans-serif, system-ui';
+    ctx.fillStyle = '#666666';
+    ctx.fillText('Upload your photo at', W / 2, ctaY + 160);
+
+    ctx.font = '900 42px ui-sans-serif, system-ui';
+    ctx.fillStyle = '#ef4444';
+    ctx.fillText('CRIMECAM.FUN', W / 2, ctaY + 220);
+
+    const blob: Blob | null = await new Promise(r => canvas.toBlob(b => r(b), 'image/jpeg', 0.9));
+    if (blob) blobs.push(blob);
+  }
+
+  return blobs;
+}

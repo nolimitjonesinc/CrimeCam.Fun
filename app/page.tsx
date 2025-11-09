@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import ColdOpenSplash from '@/components/splash/ColdOpenSplash';
 import { compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEICToJPEG } from '@/lib/utils';
 import Lightbox from '@/components/Lightbox';
-import { exportCompositeImage } from '@/lib/export';
+import { exportCompositeImage, exportCarouselImages } from '@/lib/export';
 import { PRESETS, getPresetById, type PresetId } from '@/lib/presets';
 import ModeSelect from '@/components/ModeSelect';
 import QualitySelect from '@/components/QualitySelect';
@@ -67,6 +67,8 @@ export default function Page() {
   // const [shareOpen, setShareOpen] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
   // const [applyToAI, setApplyToAI] = useState(false);
   const { addItem } = useHistory();
 
@@ -165,21 +167,113 @@ export default function Page() {
     }
   }
 
+  async function saveAndGetShareUrl() {
+    if (!previewURL || !report || !imageFile) return null;
+    try {
+      const base64 = await fileToBase64(imageFile);
+      const res = await fetch('/api/save-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageBase64: base64,
+          report: report.report,
+          caseId: report.caseId,
+          mode: presetId,
+          spice,
+          context,
+          telemetry: report.telemetry,
+        }),
+      });
+      if (!res.ok) throw new Error('Failed to save report');
+      const data = await res.json();
+      return data.shareUrl;
+    } catch (e) {
+      console.error(e);
+      alert('Failed to save report. Please try again.');
+      return null;
+    }
+  }
+
   async function doShare() {
+    if (!previewURL || !report) return;
+    setExporting(true);
+    try {
+      // Save report and get share URL if we don't have it yet
+      if (!shareUrl) {
+        const url = await saveAndGetShareUrl();
+        if (url) setShareUrl(url);
+      }
+      setShareModalOpen(true);
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  async function copyShareLink() {
+    if (!shareUrl) {
+      const url = await saveAndGetShareUrl();
+      if (!url) return;
+      setShareUrl(url);
+      await navigator.clipboard.writeText(url);
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+    }
+    alert('Link copied to clipboard!');
+  }
+
+  async function downloadCarouselImages() {
+    if (!previewURL || !report) return;
+    try {
+      setExporting(true);
+      const blobs = await exportCarouselImages({
+        src: previewURL,
+        caseId: report.caseId,
+        report: report.report,
+        titleOverride: getPresetById(presetId).exportTitle,
+      });
+
+      // Download each image
+      for (let i = 0; i < blobs.length; i++) {
+        const url = URL.createObjectURL(blobs[i]);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `crime-scene-${report.caseId}-${i + 1}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        // Small delay between downloads
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Export failed. Try again.');
+    } finally {
+      setExporting(false);
+    }
+  }
+
+  async function downloadSingleImage() {
     if (!previewURL || !report) return;
     try {
       setExporting(true);
       const exportTitle = getPresetById(presetId).exportTitle;
-      const blob = await exportCompositeImage({ src: previewURL, caseId: report.caseId, report: report.report, filter: 'none', useShortText: false, titleOverride: exportTitle, format: 'jpeg' });
-      const file = new File([blob], `crime-scene-${report.caseId}.jpg`, { type: 'image/jpeg' });
-      const canShareFile = typeof navigator !== 'undefined' && 'canShare' in navigator && (navigator as any).canShare?.({ files: [file] });
-      if (typeof (navigator as any).share === 'function' && canShareFile) {
-        try { await (navigator as any).share({ files: [file], title: `Case #${report.caseId}`, text: 'Crime Scene Report' }); return; } catch {}
-      }
+      const blob = await exportCompositeImage({
+        src: previewURL,
+        caseId: report.caseId,
+        report: report.report,
+        filter: 'none',
+        useShortText: false,
+        titleOverride: exportTitle,
+        format: 'jpeg',
+      });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url; a.download = `crime-scene-${report.caseId}.png`;
-      document.body.appendChild(a); a.click(); a.remove();
+      a.href = url;
+      a.download = `crime-scene-${report.caseId}.jpg`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error(e);
@@ -379,6 +473,74 @@ export default function Page() {
       )}
 
       <Lightbox open={lightboxOpen} onClose={() => setLightboxOpen(false)} src={previewURL || ''} alt="Image preview" />
+
+      {/* Share Modal */}
+      {shareModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setShareModalOpen(false)}>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-neutral-900 border-2 border-crime-border rounded-2xl p-6 max-w-md w-full shadow-crime"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-2xl font-bold mb-2 text-neutral-50">Share Report</h3>
+            <p className="text-sm text-neutral-400 mb-6">Choose how you'd like to share your report</p>
+
+            <div className="space-y-3">
+              {/* Copy Link Option */}
+              <button
+                onClick={() => { copyShareLink(); setShareModalOpen(false); }}
+                className="w-full p-4 bg-crime-surface border border-crime-border rounded-lg hover:border-crime-red transition-all text-left group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="text-3xl">🔗</div>
+                  <div className="flex-1">
+                    <div className="font-bold text-neutral-50 group-hover:text-crime-red transition-colors">Copy Share Link</div>
+                    <div className="text-xs text-neutral-400">Best for texts & social media - includes rich preview</div>
+                  </div>
+                </div>
+              </button>
+
+              {/* Carousel Images Option */}
+              <button
+                onClick={() => { downloadCarouselImages(); setShareModalOpen(false); }}
+                className="w-full p-4 bg-crime-surface border border-crime-border rounded-lg hover:border-crime-red transition-all text-left group"
+                disabled={exporting}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="text-3xl">📸</div>
+                  <div className="flex-1">
+                    <div className="font-bold text-neutral-50 group-hover:text-crime-red transition-colors">Download Carousel (3-4 images)</div>
+                    <div className="text-xs text-neutral-400">Perfect for Instagram stories & swipeable posts</div>
+                  </div>
+                </div>
+              </button>
+
+              {/* Single Image Option */}
+              <button
+                onClick={() => { downloadSingleImage(); setShareModalOpen(false); }}
+                className="w-full p-4 bg-crime-surface border border-crime-border rounded-lg hover:border-crime-red transition-all text-left group"
+                disabled={exporting}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="text-3xl">🖼️</div>
+                  <div className="flex-1">
+                    <div className="font-bold text-neutral-50 group-hover:text-crime-red transition-colors">Download Single Image</div>
+                    <div className="text-xs text-neutral-400">Classic format - full report in one image</div>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShareModalOpen(false)}
+              className="mt-6 w-full btn btn-ghost"
+            >
+              Cancel
+            </button>
+          </motion.div>
+        </div>
+      )}
     </ColdOpenSplash>
   );
 }
