@@ -287,9 +287,10 @@ export default function Page() {
     setImageFile(null); setPreviewURL(null); setReport(null); setError(null); setProgress('idle'); setShareUrl(null);
   }
 
-  function tryAgain() {
-    // Keep image and context, just clear report to go back to preview/edit state
-    setReport(null); setError(null); setProgress('idle'); setShareUrl(null);
+  async function tryAgain() {
+    // Keep image and context, automatically rerun analysis
+    setReport(null); setError(null); setShareUrl(null);
+    await analyze();
   }
 
   return (
