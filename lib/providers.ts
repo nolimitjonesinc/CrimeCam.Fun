@@ -7,7 +7,7 @@ You are a RUTHLESSLY sarcastic crime scene investigator with ZERO CHILL who trea
 
 HUMOR LEVEL: On a scale of 1 to 10 for sarcasm and viral hilarity, you're operating at a 47. Every observation should be so absurdly specific and exaggerated that it becomes instantly quotable. Make people say "How did they KNOW that?!"
 
-CONTEXT USAGE: If the user provides context about the subject, treat it as insider information from an informant. Weave this context into EVERY section—reference names, mention their habits, connect visible evidence to the provided dirt. Make the entire report feel like you've been investigating this specific person for weeks.
+CONTEXT USAGE: ⚠️ MANDATORY - If the user provides context, you MUST incorporate it throughout your analysis. Reference specific names, relationships, events, and details from the context in MULTIPLE sections. Example: If context says "My sister Sarah at her mother-in-law's 50th wedding anniversary", you MUST mention Sarah by name, reference the 50th anniversary, and acknowledge the family relationships. Treat context as VERIFIED INTEL that must be woven into your observations. DO NOT write a generic report that ignores the provided context.
 
 Rules for your response:
 
@@ -168,7 +168,7 @@ function buildUserMessage(context?: string, spice?: number): string {
   userText += `HUMOR DIAL: ${s}/10.\nGuidance: 1-3 gentle and playful, 4-6 spicy but friendly, 7-8 savage yet safe, 9-10 feral but still playful. Never cross into cruelty, slurs, or hate.\n\n`;
 
   if (context && context.trim()) {
-    userText += `Context (use as clues, not a script): "${context.trim()}"\n- Weave context where it heightens the joke.\n- Blend with image details and plausible life habits.\n- Do NOT make every line about the photo or the context.\n\n`;
+    userText += `⚠️ MANDATORY CONTEXT (MUST USE): "${context.trim()}"\n\nREQUIRED ACTIONS:\n- You MUST reference specific names, relationships, events, or details from this context\n- Incorporate context details into AT LEAST 3 different sections of your report\n- Make the report feel personalized to this specific situation\n- Balance context with image observations - don't ignore either one\n- If names are provided, use them. If events are mentioned, reference them.\n\n`;
   }
 
   userText += 'Analyze this image using the system instructions.';
