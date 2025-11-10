@@ -244,12 +244,24 @@ export default function ModeSelect({ value, onChange }: Props) {
           <div className={`absolute inset-0 ${style ? "" : "bg-gradient-to-r"} ${!style ? gradientClass[id] : ""}`} style={style} />
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4">
             {id === 'elf' ? (
-              // Green backgrounds only for Nice or Naughty List mode
+              // Green backgrounds for Nice or Naughty List mode
               <>
                 <div className="bg-green-700 px-4 py-2 rounded-lg shadow-lg">
                   <div className="text-2xl font-bold text-white drop-shadow-lg text-center">{title}</div>
                 </div>
                 <div className="bg-green-700 px-3 py-1.5 rounded-lg shadow-lg">
+                  <div className="text-sm text-white drop-shadow text-center">
+                    {preset?.shortDesc || 'Select a mode to get started.'}
+                  </div>
+                </div>
+              </>
+            ) : id === 'warning_label' ? (
+              // Black backgrounds for Warning Label mode
+              <>
+                <div className="bg-black px-4 py-2 rounded-lg shadow-lg">
+                  <div className="text-2xl font-bold text-white drop-shadow-lg text-center">{title}</div>
+                </div>
+                <div className="bg-black px-3 py-1.5 rounded-lg shadow-lg">
                   <div className="text-sm text-white drop-shadow text-center">
                     {preset?.shortDesc || 'Select a mode to get started.'}
                   </div>
