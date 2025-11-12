@@ -23,9 +23,13 @@ export function isHEICFile(file: File): boolean {
 
 export async function convertHEICToJPEG(file: File): Promise<File> {
   const base = (file.name || 'image').replace(/\.(heic|heif)$/i, '') || 'image';
+  console.log('🔄 [HEIC] Starting conversion for:', file.name, 'Size:', (file.size / 1024 / 1024).toFixed(2), 'MB');
+
   // 1) Try native decode (Safari can decode HEIC natively)
   try {
+    console.log('🔄 [HEIC] Attempting native browser decode...');
     const bitmap = await createImageBitmap(file);
+    console.log('✅ [HEIC] Native decode successful! Dimensions:', bitmap.width, 'x', bitmap.height);
     const canvas = document.createElement('canvas');
     canvas.width = bitmap.width; canvas.height = bitmap.height;
     const ctx = canvas.getContext('2d');
@@ -34,17 +38,63 @@ export async function convertHEICToJPEG(file: File): Promise<File> {
     const blob: Blob = await new Promise((resolve, reject) =>
       canvas.toBlob(b => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.9)
     );
+    console.log('✅ [HEIC] Converted to JPEG:', (blob.size / 1024 / 1024).toFixed(2), 'MB');
     return new File([blob], `${base}.jpg`, { type: 'image/jpeg' });
   } catch (nativeErr) {
-    // 2) Fallback to WASM decoder (heic2any)
+    console.log('⚠️ [HEIC] Native decode failed (expected on Chrome):', nativeErr);
+
+    // 2) Try libheif-js (modern WASM decoder, better support for newer HEIC formats)
     try {
-      const { default: heic2any } = await import('heic2any');
-      const result = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
-      const jpegBlob = Array.isArray(result) ? result[0] : result;
-      return new File([jpegBlob], `${base}.jpg`, { type: 'image/jpeg' });
-    } catch (wasmErr) {
-      console.error('HEIC conversion failed (native + wasm):', nativeErr, wasmErr);
-      throw new Error('Failed to convert HEIC image on this browser. Try Safari or use a JPG/PNG.');
+      console.log('🔄 [HEIC] Trying libheif-js library (modern decoder)...');
+      const libheif = await import('libheif-js');
+      const arrayBuffer = await file.arrayBuffer();
+      const decoder = await libheif.HeifDecoder.create();
+      const data = decoder.decode(new Uint8Array(arrayBuffer));
+      if (!data || data.length === 0) throw new Error('libheif decode returned no data');
+
+      const image = data[0];
+      const width = image.get_width();
+      const height = image.get_height();
+      console.log('✅ [HEIC] libheif decoded successfully! Dimensions:', width, 'x', height);
+
+      const imageData = await new Promise<ImageData>((resolve, reject) => {
+        image.display({ data: new Uint8ClampedArray(width * height * 4), width, height }, (displayData: any) => {
+          if (!displayData) reject(new Error('libheif display failed'));
+          resolve(new ImageData(displayData.data, displayData.width, displayData.height));
+        });
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Canvas ctx missing');
+      ctx.putImageData(imageData, 0, 0);
+
+      const blob: Blob = await new Promise((resolve, reject) =>
+        canvas.toBlob(b => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.9)
+      );
+      console.log('✅ [HEIC] libheif conversion successful! JPEG size:', (blob.size / 1024 / 1024).toFixed(2), 'MB');
+      return new File([blob], `${base}.jpg`, { type: 'image/jpeg' });
+    } catch (libheifErr) {
+      console.log('⚠️ [HEIC] libheif-js failed:', libheifErr);
+
+      // 3) Final fallback to heic2any (older but sometimes works)
+      try {
+        console.log('🔄 [HEIC] Final fallback to heic2any library...');
+        const { default: heic2any } = await import('heic2any');
+        console.log('✅ [HEIC] heic2any library loaded, converting...');
+        const result = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
+        const jpegBlob = Array.isArray(result) ? result[0] : result;
+        console.log('✅ [HEIC] Conversion successful! JPEG size:', (jpegBlob.size / 1024 / 1024).toFixed(2), 'MB');
+        return new File([jpegBlob], `${base}.jpg`, { type: 'image/jpeg' });
+      } catch (heic2anyErr) {
+        console.error('❌ [HEIC] All conversion methods failed!');
+        console.error('Native error:', nativeErr);
+        console.error('libheif error:', libheifErr);
+        console.error('heic2any error:', heic2anyErr);
+        throw new Error(`HEIC conversion failed. This browser doesn't support HEIC files. Please use Safari or convert to JPG/PNG first.`);
+      }
     }
   }
 }

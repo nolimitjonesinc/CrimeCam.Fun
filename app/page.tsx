@@ -94,14 +94,14 @@ export default function Page() {
   async function onPick(file: File) {
     setError(null);
     if (!file) return;
-    
+
     // Check if it's a HEIC file or regular image
     const isHeic = isHEICFile(file);
-    if (!file.type.startsWith('image/') && !isHeic) { 
-      setError('Unsupported file type.'); 
-      return; 
+    if (!file.type.startsWith('image/') && !isHeic) {
+      setError('Unsupported file type.');
+      return;
     }
-    
+
     // No hard max size; large images will be compressed before upload
 
     let finalFile = file;
@@ -113,7 +113,13 @@ export default function Page() {
       // Then compress the image
       finalFile = await compressImage(finalFile, 1600, 0.85);
     } catch (error: any) {
-      setError(error.message || 'Image processing failed.');
+      const errorMsg = error.message || 'Image processing failed.';
+      // Provide helpful guidance for HEIC failures
+      if (isHeic && errorMsg.includes('HEIC')) {
+        setError('⚠️ HEIC conversion failed. Chrome/Firefox don\'t fully support HEIC. Please: (1) Use Safari browser, (2) Convert to JPG/PNG first, or (3) Email/AirDrop the photo which often auto-converts it.');
+      } else {
+        setError(errorMsg);
+      }
       return;
     }
 
@@ -330,13 +336,14 @@ export default function Page() {
               <div className="flex gap-3 mt-2">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
                 <label className="btn btn-primary cursor-pointer">
-                  <input type="file" accept="image/*,.heic,.heif,image/heic,image/heif,image/heic-sequence,image/heif-sequence" capture="environment" className="hidden"
+                  <input type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,image/*" capture="environment" className="hidden"
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) onPick(f); }} />
                   Use Camera
                 </label>
               </div>
-              <input ref={inputRef} type="file" accept="image/*,.heic,.heif,image/heic,image/heif,image/heic-sequence,image/heif-sequence" className="hidden"
+              <input ref={inputRef} type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,image/*" className="hidden"
                      onChange={(e)=>{const f=e.target.files?.[0]; if (f) onPick(f);}} />
+              <p className="text-xs text-neutral-500 mt-2">Supports JPG, PNG, WebP, and HEIC (iPhone photos). HEIC works best in Safari.</p>
             </div>
           </div>
           {error && (
