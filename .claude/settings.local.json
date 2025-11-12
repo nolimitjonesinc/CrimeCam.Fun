@@ -7,7 +7,8 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(npm uninstall:*)",
-      "Bash(npm install heic-decode)"
+      "Bash(npm install heic-decode)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

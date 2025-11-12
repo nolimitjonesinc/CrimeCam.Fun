@@ -106,9 +106,28 @@ export default function Page() {
 
     let finalFile = file;
     try {
-      // Convert HEIC to JPEG if needed
+      // Convert HEIC to JPEG if needed (use server-side conversion for reliability)
       if (isHeic) {
-        finalFile = await convertHEICToJPEG(file);
+        console.log('🔄 [CLIENT] HEIC detected, converting on server...');
+        const base64 = await fileToBase64(file);
+        const res = await fetch('/api/convert-heic', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageBase64: base64 })
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({ error: 'Conversion failed' }));
+          throw new Error(errorData.error || 'Server-side HEIC conversion failed');
+        }
+
+        const data = await res.json();
+        console.log('✅ [CLIENT] Server conversion successful');
+
+        // Convert base64 back to File
+        const convertedBase64 = data.imageBase64.replace(/^data:image\/jpeg;base64,/, '');
+        const convertedBlob = await fetch(`data:image/jpeg;base64,${convertedBase64}`).then(r => r.blob());
+        finalFile = new File([convertedBlob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), { type: 'image/jpeg' });
       }
       // Then compress the image
       finalFile = await compressImage(finalFile, 1600, 0.85);
@@ -116,7 +135,7 @@ export default function Page() {
       const errorMsg = error.message || 'Image processing failed.';
       // Provide helpful guidance for HEIC failures
       if (isHeic && errorMsg.includes('HEIC')) {
-        setError('⚠️ HEIC conversion failed. Chrome/Firefox don\'t fully support HEIC. Please: (1) Use Safari browser, (2) Convert to JPG/PNG first, or (3) Email/AirDrop the photo which often auto-converts it.');
+        setError('⚠️ HEIC conversion failed. Your iPhone photo format is not supported. Please: (1) Use Safari browser, (2) Convert to JPG/PNG first, or (3) Email/AirDrop the photo which often auto-converts it.');
       } else {
         setError(errorMsg);
       }
