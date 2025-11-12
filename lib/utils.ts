@@ -43,41 +43,32 @@ export async function convertHEICToJPEG(file: File): Promise<File> {
   } catch (nativeErr) {
     console.log('⚠️ [HEIC] Native decode failed (expected on Chrome):', nativeErr);
 
-    // 2) Try libheif-js (modern WASM decoder, better support for newer HEIC formats)
+    // 2) Try heic-decode (modern browser-optimized decoder)
     try {
-      console.log('🔄 [HEIC] Trying libheif-js library (modern decoder)...');
-      const libheif = await import('libheif-js');
+      console.log('🔄 [HEIC] Trying heic-decode library (browser-optimized)...');
+      const { default: decode } = await import('heic-decode');
       const arrayBuffer = await file.arrayBuffer();
-      const decoder = await libheif.HeifDecoder.create();
-      const data = decoder.decode(new Uint8Array(arrayBuffer));
-      if (!data || data.length === 0) throw new Error('libheif decode returned no data');
-
-      const image = data[0];
-      const width = image.get_width();
-      const height = image.get_height();
-      console.log('✅ [HEIC] libheif decoded successfully! Dimensions:', width, 'x', height);
-
-      const imageData = await new Promise<ImageData>((resolve, reject) => {
-        image.display({ data: new Uint8ClampedArray(width * height * 4), width, height }, (displayData: any) => {
-          if (!displayData) reject(new Error('libheif display failed'));
-          resolve(new ImageData(displayData.data, displayData.width, displayData.height));
-        });
-      });
+      console.log('🔄 [HEIC] Decoding HEIC data...');
+      const result = await decode({ buffer: arrayBuffer });
+      const { width, height, data } = result;
+      console.log('✅ [HEIC] heic-decode successful! Dimensions:', width, 'x', height);
 
       const canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext('2d');
       if (!ctx) throw new Error('Canvas ctx missing');
+
+      const imageData = new ImageData(new Uint8ClampedArray(data), width, height);
       ctx.putImageData(imageData, 0, 0);
 
       const blob: Blob = await new Promise((resolve, reject) =>
         canvas.toBlob(b => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.9)
       );
-      console.log('✅ [HEIC] libheif conversion successful! JPEG size:', (blob.size / 1024 / 1024).toFixed(2), 'MB');
+      console.log('✅ [HEIC] Conversion successful! JPEG size:', (blob.size / 1024 / 1024).toFixed(2), 'MB');
       return new File([blob], `${base}.jpg`, { type: 'image/jpeg' });
-    } catch (libheifErr) {
-      console.log('⚠️ [HEIC] libheif-js failed:', libheifErr);
+    } catch (heicDecodeErr) {
+      console.log('⚠️ [HEIC] heic-decode failed:', heicDecodeErr);
 
       // 3) Final fallback to heic2any (older but sometimes works)
       try {
@@ -91,7 +82,7 @@ export async function convertHEICToJPEG(file: File): Promise<File> {
       } catch (heic2anyErr) {
         console.error('❌ [HEIC] All conversion methods failed!');
         console.error('Native error:', nativeErr);
-        console.error('libheif error:', libheifErr);
+        console.error('heic-decode error:', heicDecodeErr);
         console.error('heic2any error:', heic2anyErr);
         throw new Error(`HEIC conversion failed. This browser doesn't support HEIC files. Please use Safari or convert to JPG/PNG first.`);
       }
