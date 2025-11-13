@@ -316,7 +316,8 @@ Subject: [3–6 word roast title ONLY — keep this SHORT and punchy, NO verdict
 
 Setting Evidence: [One sentence describing the scene/context]
 
-Verdict Meter: NICE ————|——— NAUGHTY
+Verdict Meter: NICE ————●——— NAUGHTY
+Naughty Percentage: [Pick a number 0-100. 0-40 = Nice, 41-60 = Borderline, 61-100 = Naughty]
 [One savage, specific sentence explaining the verdict placement]
 
 Image Clues Santa Noted:

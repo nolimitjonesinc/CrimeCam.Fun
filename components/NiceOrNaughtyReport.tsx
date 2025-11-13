@@ -4,6 +4,7 @@ type ParsedReport = {
   subject: string;
   settingEvidence: string;
   verdictMeter: string;
+  naughtyPercentage: number;
   verdictRationale: string;
   imageClues: string[];
   rapSheet: string[];
@@ -22,7 +23,8 @@ function parseReport(text: string): ParsedReport {
   const subjectMatch = text.match(/Subject:\s*(.+?)(?=\n\n|Setting Evidence:|$)/is);
   const settingMatch = text.match(/Setting Evidence:\s*(.+?)(?=\n\n|Verdict Meter:|$)/is);
   const verdictMeterMatch = text.match(/Verdict Meter:\s*(.+?)(?=\n)/is);
-  const verdictRationaleMatch = text.match(/Verdict Meter:.*?\n(.+?)(?=\n\n|Image Clues:|$)/is);
+  const percentageMatch = text.match(/Naughty Percentage:\s*(\d+)/i);
+  const verdictRationaleMatch = text.match(/Naughty Percentage:.*?\n(.+?)(?=\n\n|Image Clues:|$)/is);
 
   // Extract bulleted lists - more flexible regex
   const imageCluesMatch = text.match(/Image Clues Santa Noted:\s*([\s\S]*?)(?=\n\n|Alleged 12-Month|$)/i);
@@ -47,10 +49,13 @@ function parseReport(text: string): ParsedReport {
       .filter(line => line.length > 5); // Ignore very short lines
   };
 
+  const naughtyPercentage = percentageMatch ? parseInt(percentageMatch[1], 10) : 50;
+
   const parsed: ParsedReport = {
     subject: subjectMatch?.[1]?.trim() || 'The Subject',
     settingEvidence: settingMatch?.[1]?.trim() || '',
     verdictMeter: verdictMeterMatch?.[1]?.trim() || 'NICE ————●——— NAUGHTY',
+    naughtyPercentage: Math.min(100, Math.max(0, naughtyPercentage)),
     verdictRationale: verdictRationaleMatch?.[1]?.trim() || '',
     imageClues: extractBullets(imageCluesMatch),
     rapSheet: extractBullets(rapSheetMatch),
@@ -69,10 +74,22 @@ function parseReport(text: string): ParsedReport {
 export function NiceOrNaughtyReport({ text }: { text: string }) {
   const report = parseReport(text);
 
-  // Determine verdict from meter position
-  const meterLower = report.verdictMeter.toLowerCase();
-  const isNaughty = meterLower.includes('naughty') && (meterLower.indexOf('●') > meterLower.indexOf('naughty') || meterLower.lastIndexOf('—') > meterLower.length / 2);
-  const isNice = !isNaughty;
+  // Determine verdict from percentage
+  const isNaughty = report.naughtyPercentage >= 61;
+  const isNice = report.naughtyPercentage <= 40;
+  const isBorderline = !isNice && !isNaughty;
+
+  // Determine verdict label
+  let verdictLabel = 'BORDERLINE';
+  let verdictClass = 'FENCE-SITTER';
+  if (isNice) {
+    verdictLabel = 'NICE';
+    verdictClass = report.naughtyPercentage <= 20 ? 'ANGEL STATUS' : 'NICE (BARELY)';
+  } else if (isNaughty) {
+    verdictLabel = 'NAUGHTY';
+    if (report.naughtyPercentage >= 81) verdictClass = 'COAL GUARANTEED';
+    else if (report.naughtyPercentage >= 61) verdictClass = 'REPEAT OFFENDER';
+  }
 
   return (
     <div className="relative max-w-3xl mx-auto">
@@ -107,19 +124,70 @@ export function NiceOrNaughtyReport({ text }: { text: string }) {
             </div>
           )}
 
-          {/* Verdict Meter - Big and Bold */}
-          <div className="text-center py-6 bg-neutral-50 border-2 border-neutral-300 rounded">
-            <p className="text-sm font-semibold text-neutral-600 uppercase tracking-wide mb-3">Verdict Meter</p>
-            <div className="text-2xl font-mono font-bold mb-2"
+          {/* Verdict Section - Bold Declaration + Visual Bar */}
+          <div className="bg-neutral-50 border-4 border-neutral-800 rounded-lg overflow-hidden">
+            {/* Verdict Declaration */}
+            <div
+              className="text-center py-4 px-6 border-b-4 border-neutral-800"
               style={{
-                color: isNaughty ? '#991B1B' : '#065F46',
+                backgroundColor: isNaughty ? '#991B1B' : isNice ? '#065F46' : '#D97706',
               }}
             >
-              {report.verdictMeter}
+              <p className="text-sm font-bold text-white uppercase tracking-wider mb-1">Final Verdict</p>
+              <h2 className="text-3xl font-black text-white tracking-tight">
+                {verdictLabel} ({report.naughtyPercentage}%)
+              </h2>
+              <p className="text-xs font-semibold text-white/90 uppercase tracking-wide mt-1">
+                Classification: {verdictClass}
+              </p>
             </div>
-            {report.verdictRationale && (
-              <p className="text-sm text-neutral-700 italic mt-2">{report.verdictRationale}</p>
-            )}
+
+            {/* Visual Naughty Severity Bar */}
+            <div className="p-6">
+              <p className="text-xs font-bold text-neutral-600 uppercase tracking-wide mb-3 text-center">
+                Naughty Severity Meter
+              </p>
+
+              {/* Progress Bar Container */}
+              <div className="relative h-8 bg-neutral-200 rounded-full overflow-hidden border-2 border-neutral-800 shadow-inner">
+                {/* Green (Nice) Bar - background */}
+                <div
+                  className="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600"
+                  style={{ width: '100%' }}
+                />
+
+                {/* Red (Naughty) Bar - overlays based on percentage */}
+                <div
+                  className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-700 transition-all duration-500"
+                  style={{ width: `${report.naughtyPercentage}%` }}
+                />
+
+                {/* Labels on top of bar */}
+                <div className="absolute inset-0 flex items-center justify-between px-3 text-xs font-bold text-white">
+                  <span className="drop-shadow-md">NICE</span>
+                  <span className="drop-shadow-md">NAUGHTY</span>
+                </div>
+              </div>
+
+              {/* Percentage indicator below bar */}
+              <div className="flex justify-between items-center mt-2 text-xs">
+                <span className="text-green-700 font-semibold">0%</span>
+                <span
+                  className="font-bold text-base"
+                  style={{ color: isNaughty ? '#991B1B' : isNice ? '#065F46' : '#D97706' }}
+                >
+                  {report.naughtyPercentage}% Naughty
+                </span>
+                <span className="text-red-700 font-semibold">100%</span>
+              </div>
+
+              {/* Rationale */}
+              {report.verdictRationale && (
+                <p className="text-sm text-neutral-700 italic mt-4 text-center border-t border-neutral-300 pt-4">
+                  {report.verdictRationale}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Image Clues Santa Noted */}
