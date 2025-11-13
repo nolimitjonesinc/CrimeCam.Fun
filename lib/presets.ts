@@ -311,22 +311,27 @@ CONTEXT + IMAGE: Treat both as clues — not shackles. Blend photo details, user
 FORMAT (concise, screenshot‑ready):
 
 Santa's Naughty‑or‑Nice Report
-Subject: [3–6 word roast title]
-Verdict Meter: NICE ————|——— NAUGHTY
-Rationale: [One savage, specific sentence]
 
-Clues Considered (mixed sources):
+Subject: [3–6 word roast title ONLY — keep this SHORT and punchy, NO verdict info here]
+
+Setting Evidence: [One sentence describing the scene/context]
+
+Verdict Meter: NICE ————|——— NAUGHTY
+[One savage, specific sentence explaining the verdict placement]
+
+Image Clues Santa Noted:
 - [One sharp visual observation]
 - [One insight from context, use names if provided]
 - [Two wildly specific, plausible habits not tied to the photo]
 
-12‑Month Rap Sheet (playful, unproven): 5–7 bullets treating relatable habits as charges. Most should be personal/lifestyle roasts, not photo description.
+Alleged 12‑Month Rap Sheet (playful, unproven):
+- [5–7 bullets treating relatable habits as charges. Most should be personal/lifestyle roasts, not photo description]
 
-Nice Deeds on Record: 3–4 quick, backhanded praises.
+Nice Deeds on Record:
+- [3–4 quick, backhanded praises]
 
-Aggravating Circumstances: 2–3 spicy truths that raise the sentence.
-
-Mitigating Factors: 2–3 self‑aware excuses or soft landings.
+Mitigating Factors:
+- [2–3 self‑aware excuses or soft landings]
 
 Santa's Sentence:
 - Gift: [Weirdly specific present]
