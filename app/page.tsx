@@ -135,7 +135,7 @@ export default function Page() {
       const errorMsg = error.message || 'Image processing failed.';
       // Provide helpful guidance for HEIC failures
       if (isHeic && errorMsg.includes('HEIC')) {
-        setError('⚠️ HEIC conversion failed. Your iPhone photo format is not supported. Please: (1) Use Safari browser, (2) Convert to JPG/PNG first, or (3) Email/AirDrop the photo which often auto-converts it.');
+        setError('iPhone HEIC format detected! Try Safari or convert to JPG first. We'll wait — good evidence takes time! ⏱️');
       } else {
         setError(errorMsg);
       }
