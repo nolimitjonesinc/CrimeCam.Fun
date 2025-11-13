@@ -74,21 +74,31 @@ function parseReport(text: string): ParsedReport {
 export function NiceOrNaughtyReport({ text }: { text: string }) {
   const report = parseReport(text);
 
-  // Determine verdict from percentage
-  const isNaughty = report.naughtyPercentage >= 61;
-  const isNice = report.naughtyPercentage <= 40;
-  const isBorderline = !isNice && !isNaughty;
+  // Calculate nice percentage
+  const nicePercentage = 100 - report.naughtyPercentage;
 
-  // Determine verdict label
-  let verdictLabel = 'BORDERLINE';
-  let verdictClass = 'FENCE-SITTER';
-  if (isNice) {
-    verdictLabel = 'NICE';
-    verdictClass = report.naughtyPercentage <= 20 ? 'ANGEL STATUS' : 'NICE (BARELY)';
-  } else if (isNaughty) {
+  // Determine which is higher
+  const isNaughty = report.naughtyPercentage > nicePercentage;
+  const isNice = nicePercentage > report.naughtyPercentage;
+  const isTied = report.naughtyPercentage === nicePercentage;
+
+  // Determine verdict label based on higher percentage
+  let verdictLabel = 'TIED';
+  let verdictPercentage = 50;
+  let verdictClass = 'PERFECTLY BALANCED';
+
+  if (isNaughty) {
     verdictLabel = 'NAUGHTY';
+    verdictPercentage = report.naughtyPercentage;
     if (report.naughtyPercentage >= 81) verdictClass = 'COAL GUARANTEED';
     else if (report.naughtyPercentage >= 61) verdictClass = 'REPEAT OFFENDER';
+    else verdictClass = 'NAUGHTY (SLIGHT EDGE)';
+  } else if (isNice) {
+    verdictLabel = 'NICE';
+    verdictPercentage = nicePercentage;
+    if (nicePercentage >= 81) verdictClass = 'ANGEL STATUS';
+    else if (nicePercentage >= 61) verdictClass = 'NICE (SOLID)';
+    else verdictClass = 'NICE (BARELY)';
   }
 
   return (
@@ -135,7 +145,7 @@ export function NiceOrNaughtyReport({ text }: { text: string }) {
             >
               <p className="text-sm font-bold text-white uppercase tracking-wider mb-1">Final Verdict</p>
               <h2 className="text-3xl font-black text-white tracking-tight">
-                {verdictLabel} ({report.naughtyPercentage}%)
+                {verdictLabel} ({verdictPercentage}%)
               </h2>
               <p className="text-xs font-semibold text-white/90 uppercase tracking-wide mt-1">
                 Classification: {verdictClass}
@@ -150,35 +160,35 @@ export function NiceOrNaughtyReport({ text }: { text: string }) {
 
               {/* Progress Bar Container */}
               <div className="relative h-8 bg-neutral-200 rounded-full overflow-hidden border-2 border-neutral-800 shadow-inner">
-                {/* Green (Nice) Bar - background */}
+                {/* Red (Naughty) Bar - fills from LEFT based on naughty percentage */}
                 <div
-                  className="absolute inset-0 bg-gradient-to-r from-green-500 to-green-600"
-                  style={{ width: '100%' }}
+                  className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-red-600 to-red-500 transition-all duration-500"
+                  style={{ width: `${report.naughtyPercentage}%` }}
                 />
 
-                {/* Red (Naughty) Bar - overlays based on percentage */}
+                {/* Green (Nice) Bar - fills from RIGHT based on nice percentage */}
                 <div
-                  className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-700 transition-all duration-500"
-                  style={{ width: `${report.naughtyPercentage}%` }}
+                  className="absolute right-0 top-0 bottom-0 bg-gradient-to-l from-green-600 to-green-500 transition-all duration-500"
+                  style={{ width: `${nicePercentage}%` }}
                 />
 
                 {/* Labels on top of bar */}
                 <div className="absolute inset-0 flex items-center justify-between px-3 text-xs font-bold text-white">
-                  <span className="drop-shadow-md">NICE</span>
                   <span className="drop-shadow-md">NAUGHTY</span>
+                  <span className="drop-shadow-md">NICE</span>
                 </div>
               </div>
 
               {/* Percentage indicator below bar */}
               <div className="flex justify-between items-center mt-2 text-xs">
-                <span className="text-green-700 font-semibold">0%</span>
+                <span className="text-red-700 font-semibold">Naughty: {report.naughtyPercentage}%</span>
                 <span
                   className="font-bold text-base"
                   style={{ color: isNaughty ? '#991B1B' : isNice ? '#065F46' : '#D97706' }}
                 >
-                  {report.naughtyPercentage}% Naughty
+                  {verdictLabel}: {verdictPercentage}%
                 </span>
-                <span className="text-red-700 font-semibold">100%</span>
+                <span className="text-green-700 font-semibold">Nice: {nicePercentage}%</span>
               </div>
 
               {/* Rationale */}
