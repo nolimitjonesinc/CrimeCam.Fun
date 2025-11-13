@@ -135,7 +135,7 @@ export default function Page() {
       const errorMsg = error.message || 'Image processing failed.';
       // Provide helpful guidance for HEIC failures
       if (isHeic && errorMsg.includes('HEIC')) {
-        setError('iPhone HEIC format detected! Try Safari or convert to JPG first. We'll wait — good evidence takes time! ⏱️');
+        setError('iPhone HEIC format detected! Try Safari or convert to JPG first. We\'ll wait — good evidence takes time! ⏱️');
       } else {
         setError(errorMsg);
       }
