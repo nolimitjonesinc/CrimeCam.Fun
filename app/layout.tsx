@@ -35,8 +35,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </Suspense>
         </div>
-        <footer className="text-center text-xs text-neutral-500 py-6 border-t border-crime-border">
-          Images are analyzed ephemerally. No storage in V1. © {new Date().getFullYear()} CrimeCam.Fun
+        <footer className="text-center text-xs text-neutral-500 py-6 border-t" style={{ borderColor: 'var(--season-border, #232326)' }}>
+          <p>Images are analyzed ephemerally — nothing stored. © {new Date().getFullYear()} CrimeCam.Fun</p>
         </footer>
       </body>
     </html>

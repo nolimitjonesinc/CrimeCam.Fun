@@ -1,8 +1,6 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-// Typewriter effect removed for report rendering in favor of sectioned layout
-// Removed separate share modal; share now generates composite and invokes OS share sheet
 import ColdOpenSplash from '@/components/splash/ColdOpenSplash';
 import { compressImage, fileToBase64, generateCaseNumber, isHEICFile, convertHEICToJPEG } from '@/lib/utils';
 import Lightbox from '@/components/Lightbox';
@@ -16,6 +14,10 @@ import { GroupRoastCarousel } from '@/components/GroupRoastCarousel';
 import { NiceOrNaughtyReport } from '@/components/NiceOrNaughtyReport';
 import { normalizeReport } from '@/lib/normalize';
 import { useHistory } from '@/components/history/useHistory';
+import { useSeason } from '@/hooks/useSeason';
+import { ModeGrid } from '@/components/ModeGrid';
+import { SpiceDots } from '@/components/SpiceDots';
+import { getRandomExample } from '@/lib/examples';
 
 // Removed hard size limit; we still compress client-side
 
@@ -69,13 +71,22 @@ export default function Page() {
   const [exporting, setExporting] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
-  // const [applyToAI, setApplyToAI] = useState(false);
   const { addItem } = useHistory();
+  const season = useSeason();
+  const example = useMemo(() => getRandomExample(season.seasonId), [season.seasonId]);
+  const uploadRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => () => { if (previewURL) URL.revokeObjectURL(previewURL); }, [previewURL]);
   useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('crimecam_preset', presetId); }, [presetId]);
   useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('crimecam_spice', String(spice)); }, [spice]);
   useEffect(() => { if (typeof window !== 'undefined') localStorage.setItem('crimecam_quality', quality); }, [quality]);
+
+  // Set featured mode from season if user hasn't manually picked one
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !localStorage.getItem('crimecam_preset')) {
+      setPresetId(season.featuredMode);
+    }
+  }, [season.featuredMode]);
 
   // Fetch available providers on mount
   useEffect(() => {
@@ -320,39 +331,38 @@ export default function Page() {
 
   return (
     <ColdOpenSplash skipIfSeen={true}>
-      {/* Upload / Preview */}
+      {/* Landing / Upload */}
       {!previewURL && (
-        <section className="mt-8 max-w-3xl mx-auto">
-          <div className="mb-8 text-center">
-            <h2 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-neutral-50">Upload Photo Evidence</h2>
-            <p className="mt-3 text-neutral-300 text-base leading-relaxed">Present your evidence — we promise to overreact.</p>
+        <section className="max-w-3xl mx-auto px-4">
+          {/* Seasonal Tagline */}
+          <div className="mt-10 mb-8 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-50">Upload Photo Evidence</h2>
+            <p className="mt-3 text-lg text-neutral-300 leading-relaxed" style={{ color: 'var(--season-accent)' }}>
+              {season.tagline}
+            </p>
           </div>
+
+          {/* Example Report Excerpt */}
+          <div className="example-card mb-8 max-w-xl mx-auto">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--season-accent)' }}>{example.mode}</span>
+              <span className="text-xs text-neutral-500">Spice {example.spice}/10</span>
+            </div>
+            <p className="text-sm text-neutral-300 leading-relaxed whitespace-pre-line">{example.excerpt}</p>
+            <p className="mt-3 text-[11px] text-neutral-500 italic">Sample report — upload a photo to get your own</p>
+          </div>
+
+          {/* Upload Zone */}
           <div
-            className={`dropzone ${dragHover ? 'hover' : ''}`}
+            ref={uploadRef}
+            className={`dropzone ${dragHover ? 'hover' : ''} max-w-xl mx-auto`}
             onDragOver={(e) => { e.preventDefault(); setDragHover(true); }}
             onDragLeave={() => setDragHover(false)}
             onDrop={(e) => { e.preventDefault(); setDragHover(false); const f = e.dataTransfer.files?.[0]; if (f) onPick(f); }}
           >
-            <div className="flex flex-col items-center gap-4 text-center">
-              <div className="w-full max-w-sm">
-                <label className="block text-left text-sm font-medium text-neutral-300 mb-2">Mode</label>
-                <ModeSelect value={presetId} onChange={(id)=>setPresetId(id)} />
-              </div>
-              <div className="w-full max-w-sm">
-                <label className="block text-left text-sm font-medium text-neutral-300 mb-1">Spice Level <span className="text-neutral-400">({spice})</span></label>
-                <input type="range" min={1} max={10} value={spice} onChange={(e)=>setSpice(parseInt(e.target.value))} className="w-full" />
-                <div className="flex justify-between text-[11px] text-neutral-500 mt-1">
-                  <span>Soft</span><span>Medium</span><span>Feral</span>
-                </div>
-              </div>
-              {/* Quality selector hidden - defaults to 'auto' (Claude 3.5 Haiku).
-                  Uncomment below for premium membership option in future */}
-              {/* <div className="w-full max-w-sm">
-                <label className="block text-left text-sm font-medium text-neutral-300 mb-2">Quality</label>
-                <QualitySelect value={quality} onChange={(q)=>setQuality(q)} availableQualities={availableQualities} />
-              </div> */}
-              {/* Removed file type/size hint per request */}
-              <div className="flex gap-3 mt-2">
+            <div className="flex flex-col items-center gap-4 text-center py-6">
+              <div className="text-neutral-400 text-sm">Drop photo here or</div>
+              <div className="flex gap-3">
                 <button className="btn btn-ghost" onClick={() => inputRef.current?.click()}>Choose File</button>
                 <label className="btn btn-primary cursor-pointer">
                   <input type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,image/*" capture="environment" className="hidden"
@@ -362,14 +372,37 @@ export default function Page() {
               </div>
               <input ref={inputRef} type="file" accept=".jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,image/*" className="hidden"
                      onChange={(e)=>{const f=e.target.files?.[0]; if (f) onPick(f);}} />
-              <p className="text-xs text-neutral-500 mt-2">Supports JPG, PNG, WebP, and HEIC (iPhone photos). HEIC works best in Safari.</p>
+              <p className="text-xs text-neutral-500">Supports JPG, PNG, WebP, and HEIC (iPhone photos)</p>
             </div>
           </div>
+
           {error && (
-            <motion.div initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mt-3 text-sm text-red-400">
+            <motion.div initial={{ y: -6, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="mt-3 text-sm text-red-400 text-center">
               {error}
             </motion.div>
           )}
+
+          {/* Spice Dots */}
+          <div className="flex justify-center mt-6">
+            <SpiceDots value={spice} onChange={setSpice} />
+          </div>
+
+          {/* Mode Grid */}
+          <div className="mt-12 mb-16">
+            <ModeGrid
+              value={presetId}
+              onChange={(id) => {
+                setPresetId(id);
+                uploadRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }}
+              season={season}
+            />
+          </div>
+
+          {/* Stats */}
+          <div className="text-center mb-8">
+            <p className="text-sm text-neutral-500">127,000+ photos roasted and counting</p>
+          </div>
         </section>
       )}
 
